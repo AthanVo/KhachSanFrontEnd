@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Khách Sạn</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="/css/khachsan.css">
+</head>
+
+<body>
+    <div class="header">
+        <div class="left">
+            <img src="./anh/screenshot 2025-04-11 030035.png" alt="Logo" />
+            <div class="info">
+                <p>Tên NV: <span id="staff-name"></span></p>
+                <p>Mã NV: <span id="staff-id"></span></p>
+                <p>Hệ thống của Đức Thịnh</p>
+            </div>
+        </div>
+        <div class="right">
+            <div class="time" id="current-time"></div>
+            <div class="notification" onclick="toggleNotifications()">
+                <i class="fas fa-bell bell-icon"></i>
+                <span class="badge" id="notification-count">0</span>
+                <div class="dropdown" id="notification-dropdown"></div>
+            </div>
+            <a class="nav-button" href="/admin.html">
+                <i class="fas fa-user-shield"></i> Quản trị
+            </a>
+
+            <button class="nav-button" onclick="openShiftEndModal()">
+                <i class="fas fa-clock"></i> Kết ca làm việc
+            </button>
+
+            <button class="nav-button" onclick="changePassword()">
+                <i class="fas fa-key"></i> Đổi mật khẩu
+            </button>
+
+            <button class="nav-button" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Đăng xuất
+            </button>
+
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="sidebar">
+            <h3>Thông tin chi tiết</h3>
+            <div class="stats">
+                <p>Tổng doanh thu: <span class="highlight" id="total-revenue">0</span></p>
+                <p>Tổng số phòng: <span class="highlight" id="total-rooms">0</span></p>
+                <p>Phòng đang sử dụng: <span class="highlight" id="occupied-rooms">0</span></p>
+                <p>Phòng trống: <span class="highlight" id="available-rooms">0</span></p>
+                <p>Phòng chờ thanh toán: <span class="highlight" id="pending-payment">0</span></p>
+            </div>
+        </div>
+
+        <div class="room-list">
+            <div class="toolbar">
+
+                <button onclick="openGroupModal()">Tạo đoàn du lịch</button>
+                <button onclick="redirectToGroupManagement()">Chọn phòng cho đoàn</button>
+                <button onclick="openMergeBillModal()">Gộp hóa đơn</button>
+
+                <!-- Bộ lọc -->
+
+            </div>
+            <div id="room-list">
+                <!-- Danh sách phòng sẽ được hiển thị ở đây -->
+            </div>
+            <div class="rooms" id="rooms-container"></div>
+            <div class="pagination-container">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination" id="pagination"></ul>
+                </nav>
+            </div>
+        </div>
+
+
+
+        <span id="booking-room-id" style="display: none;"></span>
+        <span id="booking-maphong" style="display: none;"></span>
+
+        <div class="modal" id="roomModal">
+            <button class="close-btn" onclick="closeModal()">×</button>
+            <h3>Thông tin chi tiết</h3>
+            <div class="info">
+                <p>Mã phòng: <span id="modal-room-id"></span></p>
+                <p>Khách hàng: <span id="modal-customer"></span></p>
+                <p>Loại phòng: <span id="modal-type"></span></p>
+                <p>Giá: <span id="modal-price" class="highlight"></span></p>
+                <p>Trạng thái: <span id="modal-status" class="highlight"></span></p>
+                <p>Hiện trạng: <span id="modal-current"></span></p>
+            </div>
+            <div class="actions">
+                <button onclick="openServiceModal()">Thêm dịch vụ</button>
+            </div>
+        </div>
+
+        <div class="booking-modal" id="bookingModal">
+            <button class="close-btn" onclick="closeBookingModal()">×</button>
+            <h3>Đặt phòng <span id="booking-room-number"></span></h3>
+            <div class="form">
+                <label for="booking-type">Loại đặt phòng:</label>
+                <select id="booking-type">
+                    <option value="Theo giờ">Theo giờ</option>
+                    <option value="Theo ngày">Theo ngày</option>
+                    <!-- <option value="Qua đêm">Qua đêm</option> -->
+                </select>
+                <label for="cccd-number">Số CCCD:</label>
+                <input type="text" id="cccd-number" placeholder="Nhập số CCCD">
+                <div class="cccd-actions">
+                    <button onclick="scanCCCD()">Quét CCCD</button>
+                    <input type="file" id="cccd-image" accept="image/*" style="margin-left: 10px;"
+                        title="Tải ảnh CCCD nếu webcam không hoạt động">
+                </div>
+                <div id="scan-container"
+                    style="display: none; margin-top: 10px; position: relative; text-align: center;">
+                    <div style="position: relative; display: inline-block;">
+                        <video id="video" width="300" height="200" autoplay
+                            style="border-radius: 4px; border: 1px solid #ccc;"></video>
+                        <div
+                            style="position: absolute; top: 10%; left: 10%; width: 80%; height: 80%; border: 2px dashed #00ff00; opacity: 0.7; pointer-events: none;">
+                        </div>
+                        <p style="margin: 5px 0; color: #333; font-size: 14px;">Đặt mã QR trên CCCD vào khung</p>
+                    </div>
+                    <canvas id="canvas" style="display: none;"></canvas>
+                    <button id="stop-scan"
+                        style="margin-top: 5px; background: #d33; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Dừng
+                        quét</button>
+                </div>
+                <label for="customer-name">Họ tên khách hàng:</label>
+                <input type="text" id="customer-name" placeholder="Họ tên">
+                <label for="customer-address">Địa chỉ:</label>
+                <input type="text" id="customer-address" placeholder="Địa chỉ">
+                <label for="customer-nationality">Quốc tịch:</label>
+                <input type="text" id="customer-nationality" placeholder="Quốc tịch" value="Việt Nam">
+                <div class="actions">
+                    <button class="book-btn" id="book-room-btn">Đặt phòng</button>
+                    <button class="cancel-btn" onclick="closeBookingModal()">Hủy</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="service-modal" id="serviceModal">
+            <button class="close-btn" onclick="closeServiceModal()">×</button>
+            <h3>Thêm dịch vụ cho <span id="service-room-id"></span></h3>
+            <div class="form">
+                <label for="service-name">Tên dịch vụ:</label>
+                <select id="service-name"></select>
+                <label for="service-quantity">Số lượng:</label>
+                <input type="number" id="service-quantity" min="1" value="1">
+                <div class="actions">
+                    <button class="add-btn" onclick="addService()">Thêm</button>
+                    <button class="cancel-btn" onclick="closeServiceModal()">Hủy</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="billing-modal" id="billingModal">
+            <button class="close-btn" onclick="closeBillingModal()">×</button>
+            <h3>Thanh toán hóa đơn</h3>
+            <div class="info">
+                <p>Mã hóa đơn: <span id="billing-bill-id"></span></p>
+                <p>Trạng thái hóa đơn: <span id="billing-status">Chưa thanh toán</span></p>
+                <p>Trạng thái thanh toán đặt phòng: <span id="billing-datphong-status">Chưa thanh toán</span></p>
+                <p>Tên NV mở phòng: <span id="billing-staff"></span></p>
+                <p>Mã NV mở phòng: <span id="billing-staff-id"></span></p>
+                <p>Tên NV tính tiền: <span id="current-staff-name"></span></p>
+                <p>Mã NV tính tiền: <span id="current-staff-id"></span></p>
+                <p>Thời gian nhận phòng: <span id="billing-checkin"></span></p>
+                <p>Thời gian trả phòng: <span id="billing-checkout"></span></p>
+                <p>Ghi chú: <input type="text" id="billing-note" placeholder="Ghi chú"
+                        style="width: 100%; padding: 5px;"></p>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mã sản phẩm</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Khuyến mãi</th>
+                        <th>ĐVT</th>
+                        <th>Số lượng</th>
+                        <th>Đơn giá</th>
+                        <th>%CK</th>
+                        <th>Thành tiền</th>
+                        <th>Ghi chú</th>
+                    </tr>
+                </thead>
+                <tbody id="billing-services"></tbody>
+            </table>
+            <div class="summary">
+                <div>
+                    <p>Tổng tiền dịch vụ: <span class="highlight" id="billing-total-services">0</span></p>
+                    <p>Chiết khấu hóa đơn: <span id="billing-discount">0</span></p>
+                    <p>Tiền phòng: <span id="billing-room-price">0</span></p>
+                    <p>Phí dịch vụ khách: <span id="billing-service-fee">0</span></p>
+                </div>
+                <div>
+                    <p>Tổng tiền thanh toán: <span class="highlight" id="billing-total">0</span></p>
+                    <p>Khách cần trả: <span class="highlight" id="billing-final">0</span></p>
+                    <p>Trả trước: <span id="billing-prepaid">0</span></p>
+                </div>
+            </div>
+            <div class="actions">
+                <button onclick="processPayment()">Tính tiền</button>
+            </div>
+        </div>
+
+        <div class="group-modal" id="groupModal">
+            <button class="close-btn" onclick="closeGroupModal()">×</button>
+            <h3>Thêm vào nhóm</h3>
+            <form id="group-form" onsubmit="event.preventDefault(); addToGroup()">
+                <label for="group-name">Tên đoàn:</label>
+                <input type="text" id="group-name" placeholder="Tên đoàn" required>
+                <label for="group-representative">Người đại diện:</label>
+                <input type="text" id="group-representative" placeholder="Họ tên người đại diện" required>
+                <label for="group-phone">Số điện thoại:</label>
+                <input type="text" id="group-phone" placeholder="Số điện thoại" required>
+                <div class="actions">
+                    <button type="submit" id="add-group-btn">Thêm</button>
+                    <button type="button" id="cancel-group-btn" onclick="closeGroupModal()">Hủy</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="merge-bill-modal" id="mergeBillModal">
+            <button class="close-btn" onclick="closeMergeBillModal()">×</button>
+            <h3>Gộp hóa đơn cho nhóm</h3>
+            <div class="info">
+                <label for="group-select">Chọn nhóm:</label>
+                <select id="group-select" onchange="updateMergeBillDetails()"></select>
+                <p>Mã nhóm: <span id="merge-group-id"></span></p>
+                <p>Tên nhóm: <span id="merge-group-name"></span></p>
+                <p>Người đại diện: <span id="merge-group-representative"></span></p>
+                <p>Số điện thoại: <span id="merge-group-phone"></span></p>
+                <p>Số ngày thuê: <span id="merge-rental-days"></span> ngày</p>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mã phòng</th>
+                        <th>Mã hóa đơn</th>
+                        <th>Tiền phòng</th>
+                        <th>Tên dịch vụ</th>
+                        <th>Tiền dịch vụ</th>
+                        <th>Tổng tiền</th>
+                    </tr>
+                </thead>
+                <tbody id="merge-bill-rooms"></tbody>
+            </table>
+            <div class="summary">
+                <div>
+                    <p>Tổng tiền dịch vụ: <span class="highlight" id="merge-total-services">0</span></p>
+                    <p>Tổng tiền phòng: <span id="merge-total-room">0</span></p>
+                </div>
+                <div>
+                    <p>Tổng tiền thanh toán: <span class="highlight" id="merge-total">0</span></p>
+                </div>
+            </div>
+            <div class="actions">
+                <button onclick="mergeBill()">Thanh toán</button>
+                <button onclick="closeMergeBillModal()">Hủy</button>
+            </div>
+        </div>
+
+        <div class="shift-end-modal" id="shiftEndModal">
+            <button class="close-btn" onclick="closeShiftEndModal()">×</button>
+            <h3>Kết ca làm việc</h3>
+            <div class="info">
+                <p>Mã ca: <span id="shift-id"></span></p>
+                <p>Thời gian bắt đầu: <span id="shift-start"></span></p>
+                <p>Thời gian kết thúc: <span id="shift-end"></span></p>
+                <p>Tổng tiền trong ca: <span class="highlight" id="shift-total"></span></p>
+                <p class="transfer-field" style="display: none;">
+                    Tổng tiền chuyển giao: <span class="highlight" id="shift-transfer"></span>
+                </p>
+            </div>
+            <div class="form">
+                <div id="admin-staff-selection" style="display: none;">
+                    <label for="admin-staff">Nhân viên cần kết ca:</label>
+                    <select id="admin-staff">
+                        <option value="">-- Chọn nhân viên --</option>
+                    </select>
+                </div>
+                <label for="next-staff">Nhân viên ca tiếp theo:</label>
+                <select id="next-staff"></select>
+                <label for="shift-note">Ghi chú:</label>
+                <textarea id="shift-note" placeholder="Ghi chú" rows="3"></textarea>
+                <div class="actions">
+                    <button class="confirm-btn" onclick="submitShiftEnd()">Kết thúc ca</button>
+                    <button class="cancel-btn" onclick="closeShiftEndModal()">Hủy</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="confirm-modal" class="modal confirm-modal">
+            <div class="modal-content confirm-modal-content">
+                <div class="modal-header">
+                    <h3>Xác nhận</h3>
+                    <span class="close-confirm-modal">×</span>
+                </div>
+                <div class="modal-body">
+                    <p id="confirm-message"></p>
+                </div>
+                <div class="modal-footer">
+                    <button id="confirm-yes" class="btn btn-success">Đồng ý</button>
+                    <button id="confirm-no" class="btn btn-secondary">Hủy bỏ</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="toast-container" class="toast-container"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    <script src="js/khachsan.js"></script>
+    <script src="js/ketca.js"></script>
+    <script src="js/thongbao.js"></script>
+    <script src="js/nhom.js"></script>
+    <script>
+        let currentPage = 1;
+        let totalPages = 1;
+        const pageSize = 16;
+
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('vi-VN', { dateStyle: 'short', timeStyle: 'medium' });
+            document.getElementById('current-time').textContent = timeString;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOMContentLoaded triggered');
+
+            // Kiểm tra token
+            const token = localStorage.getItem('jwtToken');
+            if (!token) {
+                console.log('Không tìm thấy token trong localStorage');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Chưa đăng nhập',
+                    text: 'Bạn cần đăng nhập để truy cập trang này!',
+                    confirmButtonText: 'Đăng nhập'
+                }).then(() => {
+                    window.location.href = '/auth/login.html';
+                });
+                return;
+            }
+
+            // Kiểm tra vai trò ngay sau khi kiểm tra token
+            const role = localStorage.getItem('vaitro');
+            console.log('User role:', role);
+            try {
+                if (role !== "Quản trị" && role !== "Nhân viên") {
+                    console.log('Người dùng không có quyền truy cập trang này:', role);
+                    if (role === "Khách hàng") {
+                        console.log('Chuyển hướng Khách hàng đến Booking');
+                        window.location.href = 'khachhang.html';
+                    } else {
+                        console.log('Không có vai trò hợp lệ, chuyển hướng đến login.html');
+                        localStorage.removeItem('jwtToken');
+                        localStorage.removeItem('tenDangNhap');
+                        localStorage.removeItem('vaitro');
+                        localStorage.removeItem('hoTen');
+                        window.location.href = '/login.html';
+                    }
+                    return; // Ngừng thực thi các hàm khác
+                }
+            } catch (error) {
+                console.error('Lỗi khi kiểm tra vai trò:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi hệ thống',
+                    text: 'Có lỗi xảy ra khi kiểm tra quyền truy cập. Vui lòng đăng nhập lại!',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    localStorage.removeItem('jwtToken');
+                    localStorage.removeItem('tenDangNhap');
+                    localStorage.removeItem('vaitro');
+                    localStorage.removeItem('hoTen');
+                    window.location.href = '/login.html';
+                });
+                return;
+            }
+
+            // Bind toggleDarkMode to button
+            const toggleButton = document.querySelector('.toggle-dark-mode');
+            if (toggleButton) {
+                toggleButton.addEventListener('click', toggleDarkMode);
+            } else {
+                console.error('Toggle dark mode button not found');
+            }
+
+            // Apply saved dark mode
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                console.log('Applying dark mode from localStorage');
+                document.body.classList.add('dark-mode');
+                if (toggleButton) {
+                    toggleButton.innerHTML = '<i class="fas fa-sun"></i> Chế độ sáng';
+                }
+            }
+
+            updateTime();
+            setInterval(updateTime, 1000);
+
+            fetch('http://localhost:5000/api/KhachSanAPI/UpdateRoomStatus', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    console.log('UpdateRoomStatus response status:', response.status);
+                    if (!response.ok) {
+                        if (response.status === 401) {
+                            throw new Error('Unauthorized');
+                        }
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('UpdateRoomStatus data:', data);
+                    if (data.success) {
+                        console.log('Đã cập nhật trạng thái phòng:', data.message);
+                    } else {
+                        console.error('Cập nhật trạng thái phòng thất bại:', data.message);
+                        showToast(data.message || 'Cập nhật trạng thái phòng thất bại!', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Lỗi khi cập nhật trạng thái phòng:', error);
+                    if (error.message === 'Unauthorized') {
+                        showToast('Phiên đăng nhập hết hạn, vui lòng đăng nhập lại', 'error');
+                        localStorage.removeItem('jwtToken');
+                        localStorage.removeItem('tenDangNhap');
+                        localStorage.removeItem('vaitro');
+                        localStorage.removeItem('hoTen');
+                        window.location.href = '/login.html';
+                    } else {
+                        showToast('Lỗi khi cập nhật trạng thái phòng: ' + error.message, 'error');
+                    }
+                });
+
+            console.log('Calling loadUserInfo');
+            loadUserInfo();
+            console.log('Calling loadRooms');
+            loadRooms();
+            console.log('Checking loadNotifications');
+            if (typeof loadNotifications === 'function') {
+                console.log('Calling loadNotifications');
+                loadNotifications();
+            } else {
+                console.warn('loadNotifications không được định nghĩa');
+            }
+        });
+    </script>
+</body>
+
+</html>

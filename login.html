@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập / Đăng ký</title>
+    <link rel="icon" href="data:;base64,="> 
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        
+    </style>
+</head>
+<body>
+    <div class="container" id="container">
+        <!-- Sign Up Form -->
+        <div class="form-container sign-up-container">
+            <form id="signup-form">
+                <h1>Tạo tài khoản</h1>
+                <div class="social-container">
+                    <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+                    <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+                <span>hoặc sử dụng email để đăng ký</span>
+                <input type="text" id="signup-HotenKH" placeholder="Họ tên" required />
+                <input type="text" id="signup-TenDN" placeholder="Tên đăng nhập" required />
+                <input type="password" id="signup-MatKhau" placeholder="Mật khẩu" required />
+                <input type="password" id="signup-Matkhaunhaplai" placeholder="Nhập lại mật khẩu" required />
+                <input type="email" id="signup-Email" placeholder="Email" required />
+                <input type="text" id="signup-Dienthoai" placeholder="Số điện thoại" required />
+                <button type="submit">Đăng ký</button>
+                <div id="signup-message" class="message"></div>
+            </form>
+        </div>
+
+        <!-- Sign In Form -->
+        <div class="form-container sign-in-container">
+            <form id="signin-form">
+                <h1>Đăng nhập</h1>
+                <div class="social-container">
+                    <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+                    <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+                <span>hoặc sử dụng tài khoản của bạn</span>
+                <input type="text" id="signin-TenDN" placeholder="Tên đăng nhập" required />
+                <input type="password" id="signin-MatKhau" placeholder="Mật khẩu" required />
+                <label>
+                    <input type="checkbox" id="RememberMe" name="rememberMe" /> Ghi nhớ đăng nhập
+                </label>
+                <a href="#">Quên mật khẩu?</a>
+                <button type="submit">Đăng nhập</button>
+                <div id="signin-message" class="message"></div>
+            </form>
+        </div>
+
+        <!-- Overlay -->
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>Chào mừng trở lại!</h1>
+                    <p>Để tiếp tục kết nối, vui lòng đăng nhập với thông tin cá nhân của bạn</p>
+                    <button class="ghost" id="signIn">Đăng nhập</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>Xin chào!</h1>
+                    <p>Nhập thông tin cá nhân và bắt đầu hành trình với chúng tôi</p>
+                    <button class="ghost" id="signUp">Đăng ký</button>
+                </div>
+            </div>
+        </div>
+    </div>  
+
+    <footer></footer>
+
+    <script>
+        // Toggle between sign-in and sign-up panels
+        const signUpButton = document.getElementById('signUp');
+        const signInButton = document.getElementById('signIn');
+        const container = document.getElementById('container');
+
+        signUpButton.addEventListener('click', () => {
+            container.classList.add('right-panel-active');
+        });
+
+        signInButton.addEventListener('click', () => {
+            container.classList.remove('right-panel-active');
+        });
+
+        // Handle sign-in form submission
+        document.getElementById("signin-form").addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const tenDN = document.getElementById("signin-TenDN").value.trim();
+            const matKhau = document.getElementById("signin-MatKhau").value;
+            const rememberMe = document.getElementById("RememberMe").checked;
+            const messageElement = document.getElementById("signin-message");
+
+            // Clear previous messages
+            messageElement.innerText = "";
+
+            // Client-side validation
+            if (!tenDN || !matKhau) {
+                messageElement.innerText = "Vui lòng nhập đầy đủ thông tin";
+                messageElement.style.color = "red";
+                return;
+            }
+
+            // Show loading message
+            messageElement.innerText = "Đang đăng nhập...";
+            messageElement.style.color = "blue";
+
+            try {
+                console.log("Sending login request...");
+                const response = await fetch("http://localhost:5000/api/Auth/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ tenDN, matKhau, rememberMe })
+                });
+
+                console.log("Response status:", response.status);
+                const result = await response.json();
+                console.log("Response data:", result);
+
+                if (response.ok && result.success) {
+                    // Store user data in localStorage
+                    localStorage.setItem("jwtToken", result.token);
+                    localStorage.setItem("tenDangNhap", result.username);
+                    localStorage.setItem("vaitro", result.vaitro);
+                    localStorage.setItem("hoTen", result.hoTen);
+                    
+                    console.log("Login successful, stored data:");
+                    console.log("Token:", localStorage.getItem("jwtToken"));
+                    console.log("Username:", localStorage.getItem("tenDangNhap"));
+                    console.log("Role:", localStorage.getItem("vaitro"));
+                    console.log("Full name:", localStorage.getItem("hoTen"));
+
+                    messageElement.innerText = "Đăng nhập thành công! Đang chuyển hướng...";
+                    messageElement.style.color = "green";
+
+                    // Redirect after 1.5 seconds
+                    setTimeout(() => {
+                        console.log("Redirecting to khachsan.html...");
+                        window.location.href = "index.html";
+                    }, 1500);
+                } else {
+                    messageElement.innerText = result.message || "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.";
+                    messageElement.style.color = "red";
+                }
+            } catch (error) {
+                console.error("Login error:", error);
+                messageElement.innerText = "Lỗi kết nối. Vui lòng thử lại sau.";
+                messageElement.style.color = "red";
+            }
+        });
+
+        // Handle sign-up form submission
+        document.getElementById("signup-form").addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const hotenKH = document.getElementById("signup-HotenKH").value.trim();
+            const tenDN = document.getElementById("signup-TenDN").value.trim();
+            const matKhau = document.getElementById("signup-MatKhau").value;
+            const matkhaunhaplai = document.getElementById("signup-Matkhaunhaplai").value;
+            const email = document.getElementById("signup-Email").value.trim();
+            const dienthoai = document.getElementById("signup-Dienthoai").value.trim();
+            const messageElement = document.getElementById("signup-message");
+
+            // Clear previous messages
+            messageElement.innerText = "";
+
+            // Client-side validation
+            if (!hotenKH || !tenDN || !matKhau || !matkhaunhaplai || !email || !dienthoai) {
+                messageElement.innerText = "Vui lòng nhập đầy đủ thông tin";
+                messageElement.style.color = "red";
+                return;
+            }
+
+            if (matKhau !== matkhaunhaplai) {
+                messageElement.innerText = "Mật khẩu nhập lại không khớp";
+                messageElement.style.color = "red";
+                return;
+            }
+
+            if (matKhau.length < 8) {
+                messageElement.innerText = "Mật khẩu phải dài ít nhất 8 ký tự";
+                messageElement.style.color = "red";
+                return;
+            }
+
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                messageElement.innerText = "Email không hợp lệ";
+                messageElement.style.color = "red";
+                return;
+            }
+
+            // Phone validation - Vietnamese phone numbers
+            if (!/^(0|\+84)[0-9]{9,10}$/.test(dienthoai)) {
+                messageElement.innerText = "Số điện thoại không hợp lệ (10-11 chữ số)";
+                messageElement.style.color = "red";
+                return;
+            }
+
+            // Show loading message
+            messageElement.innerText = "Đang đăng ký...";
+            messageElement.style.color = "blue";
+
+            try {
+                console.log("Sending registration request...");
+                const response = await fetch("http://localhost:5000/api/Auth/register", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ 
+                        hotenKH, 
+                        tenDN, 
+                        matKhau, 
+                        matkhaunhaplai, 
+                        email, 
+                        dienthoai 
+                    })
+                });
+
+                console.log("Response status:", response.status);
+                const result = await response.json();
+                console.log("Response data:", result);
+
+                if (response.ok && result.success) {
+                    messageElement.innerText = result.message || "Đăng ký thành công! Đang chuyển về đăng nhập...";
+                    messageElement.style.color = "green";
+                    
+                    // Clear form
+                    document.getElementById("signup-form").reset();
+                    
+                    // Switch to sign-in panel after 2 seconds
+                    setTimeout(() => {
+                        container.classList.remove('right-panel-active');
+                        messageElement.innerText = "";
+                        
+                        // Show success message on sign-in panel
+                        const signinMessage = document.getElementById("signin-message");
+                        signinMessage.innerText = "Đăng ký thành công! Vui lòng đăng nhập.";
+                        signinMessage.style.color = "green";
+                        
+                        // Clear sign-in success message after 3 seconds
+                        setTimeout(() => {
+                            signinMessage.innerText = "";
+                        }, 3000);
+                    }, 2000);
+                } else {
+                    messageElement.innerText = result.message || "Đăng ký thất bại. Vui lòng thử lại.";
+                    messageElement.style.color = "red";
+                }
+            } catch (error) {
+                console.error("Registration error:", error);
+                messageElement.innerText = "Lỗi kết nối. Vui lòng thử lại sau.";
+                messageElement.style.color = "red";
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Chủ - Khách Sạn</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/css/index.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <div class="container">
+                <a class="navbar-brand" href="index.html">
+                    <i class="fas fa-hotel me-2"></i>Khách Sạn
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="index.html">
+                                <i class="fas fa-home me-1"></i>Trang chủ
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="roomDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-bed me-1"></i>Phòng
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="roomDropdown">
+                                <li>
+                                    <a class="dropdown-item" href="khachhang.html">
+                                        <i class="fas fa-list"></i> Tất cả phòng
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li class="dropdown-submenu">
+                                    <a class="dropdown-item" href="#">
+                                        <i class="fas fa-star"></i> Loại phòng <i class="fas fa-angle-right ms-2"></i>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a class="dropdown-item" href="#">
+                                                <i class="fas fa-user"></i> Standard
+                                                <span class="badge badge-custom ms-1">Phổ biến</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">
+                                                <i class="fas fa-user-friends"></i> Superior
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">
+                                                <i class="fas fa-crown"></i> Deluxe
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">
+                                                <i class="fas fa-gem"></i> Suite
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="dropdown-submenu">
+                                    <a class="dropdown-item" href="#">
+                                        <i class="fas fa-users"></i> Sức chứa <i class="fas fa-angle-right ms-2"></i>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a class="dropdown-item" href="#">
+                                                <i class="fas fa-user"></i> Phòng đơn
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">
+                                                <i class="fas fa-user-friends"></i> Phòng đôi
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">
+                                                <i class="fas fa-users"></i> Phòng gia đình
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="fas fa-percentage"></i> Khuyến mãi
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="serviceDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-concierge-bell me-1"></i>Dịch vụ
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="serviceDropdown">
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="fas fa-utensils"></i> Nhà hàng
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="fas fa-spa"></i> Spa & Massage
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="fas fa-swimming-pool"></i> Hồ bơi
+                                    </a>
+                                </li>
+                                <li class="dropdown-submenu">
+                                    <a class="dropdown-item" href="#">
+                                        <i class="fas fa-dumbbell"></i> Thể thao & Giải trí <i class="fas fa-angle-right ms-2"></i>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a class="dropdown-item" href="#">
+                                                <i class="fas fa-dumbbell"></i> Phòng tập gym
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">
+                                                <i class="fas fa-table-tennis"></i> Các môn thể thao
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">
+                                                <i class="fas fa-child"></i> Khu vui chơi trẻ em
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="fas fa-car"></i> Dịch vụ đưa đón
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="promotionDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-tags me-1"></i>Khuyến mãi
+                                <span class="badge badge-custom ms-1">Hot</span>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="promotionDropdown">
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="fas fa-fire"></i> Ưu đãi hot
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="fas fa-calendar-alt"></i> Khuyến mãi theo mùa
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="fas fa-user-friends"></i> Khuyến mãi theo nhóm
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="fas fa-gift"></i> Quà tặng đặc biệt
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/khachhang.html">
+                                <i class=""></i>Đặt Phòng Ngay
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-phone me-1"></i>Liên hệ
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav ms-auto" id="user-menu">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-search me-1"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <header class="hero">
+            <div class="hero-content">
+                <h1>Chào Mừng Đến Với Khách Sạn</h1>
+                <p>Trải nghiệm tuyệt vời cùng dịch vụ đẳng cấp</p>
+                <a href="/khachsan.html" class="btn btn-primary" id="explore-service-btn">Khám Phá Dịch Vụ</a>
+            </div>
+        </header>
+
+        <section id="services" class="services">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="service-card">
+                        <i class="fas fa-bed"></i>
+                        <h3>Phòng Ngủ Tiện Nghi</h3>
+                        <p>Hãy tận hưởng những phòng ngủ được thiết kế để thư giãn với đầy đủ tiện nghi hiện đại mà bạn cần.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="service-card">
+                        <i class="fas fa-spa"></i>
+                        <h3>Không Gian Thư Giãn</h3>
+                        <p>Thư giãn và phục hồi năng lượng trong không gian yên bình và tĩnh lặng của chúng tôi.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="service-card">
+                        <i class="fas fa-users"></i>
+                        <h3>Thân Thiện Với Gia Đình</h3>
+                        <p>Chúng tôi cung cấp các lựa chọn tuyệt vời cho các gia đình tìm kiếm một kỳ nghỉ vui vẻ và an toàn.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+    // Lấy vai trò từ localStorage
+    const role = localStorage.getItem('vaitro');
+    const exploreBtn = document.getElementById('explore-service-btn');
+
+    // Kiểm tra vai trò và điều chỉnh hiển thị nút
+    if (exploreBtn) {
+        if (role === "Khách hàng") {
+            console.log('Ẩn nút "Khám Phá Dịch Vụ" vì vai trò là Khách hàng');
+            exploreBtn.style.display = 'none'; // Ẩn nút
+        } else if (role === "Quản trị" || role === "Nhân viên") {
+            console.log('Hiển thị nút "Khám Phá Dịch Vụ" vì vai trò là Quản trị hoặc Nhân viên');
+            exploreBtn.style.display = 'inline-block'; // Hiển thị nút (giá trị mặc định của <a>)
+        } else {
+            console.log('Không có vai trò hợp lệ, ẩn nút và chuyển hướng đến trang đăng nhập');
+            exploreBtn.style.display = 'none'; // Ẩn nút
+        }
+    } else {
+        console.error('Không tìm thấy nút "explore-service-btn" trong DOM');
+    }
+});
+        $(document).ready(function () {
+    $('.dropdown-submenu > a').on('click', function (e) {
+        if ($(window).width() < 992) {
+            e.preventDefault();
+            e.stopPropagation();
+            $(this).next('.dropdown-menu').toggle();
+        }
+    });
+
+    $('.navbar-collapse').on('hide.bs.collapse', function () {
+        $('.dropdown-submenu .dropdown-menu').hide();
+    });
+
+    // Kiểm tra trạng thái đăng nhập
+    const token = localStorage.getItem('jwtToken');
+    const tenDangNhap = localStorage.getItem('tenDangNhap');
+    const userMenu = document.getElementById('user-menu');
+
+    if (token && tenDangNhap) {
+        userMenu.innerHTML += `
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-user me-1"></i>Xin chào, ${tenDangNhap}
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li>
+                        <a class="dropdown-item" href="profile.html">
+                            <i class="fas fa-user-circle me-1"></i>Thông tin tài khoản
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="javascript:void(0);" onclick="logout()">
+                            <i class="fas fa-sign-out-alt me-1"></i>Đăng xuất
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        `;
+    } else {
+        userMenu.innerHTML += `
+            <li class="nav-item">
+                <a class="nav-link" href="/login.html">
+                    <i class="fas fa-sign-in-alt me-1"></i>Đăng nhập
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/login.html">
+                    <i class="fas fa-user-plus me-1"></i>Đăng ký
+                </a>
+            </li>
+        `;
+    }
+});
+
+function logout() {
+    const token = localStorage.getItem('jwtToken');
+    if (!token) {
+        localStorage.removeItem('jwtToken');
+        localStorage.removeItem('tenDangNhap');
+        localStorage.removeItem('hoTen');
+        localStorage.removeItem('maNhanVien');
+        localStorage.removeItem('vaitro');
+        Swal.fire({
+            icon: 'success',
+            title: 'Đăng xuất thành công',
+            showConfirmButton: false,
+            timer: 1500
+        }).then(() => {
+            window.location.href = 'index.html';
+        });
+        return;
+    }
+
+    fetch('http://localhost:5000/api/Auth/logout', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        }
+    })
+    .then(async response => {
+        const responseBody = await response.text();
+        console.log('Logout response:', response.status, responseBody);
+        localStorage.removeItem('jwtToken');
+        localStorage.removeItem('tenDangNhap');
+        localStorage.removeItem('hoTen');
+        localStorage.removeItem('maNhanVien');
+        localStorage.removeItem('vaitro');
+        if (response.ok) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Đăng xuất thành công',
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                window.location.href = 'index.html';
+            });
+        } else {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Cảnh báo',
+                text: `Đã đăng xuất cục bộ. Server trả về: ${response.status} ${responseBody}`
+            }).then(() => {
+                window.location.href = 'index.html';
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error during logout:', error);
+        localStorage.removeItem('jwtToken');
+        localStorage.removeItem('tenDangNhap');
+        localStorage.removeItem('hoTen');
+        localStorage.removeItem('maNhanVien');
+        localStorage.removeItem('vaitro');
+        Swal.fire({
+            icon: 'success',
+            title: 'Đăng xuất thành công',
+            text: 'Đã đăng xuất cục bộ do lỗi mạng.',
+            showConfirmButton: false,
+            timer: 1500
+        }).then(() => {
+            window.location.href = 'index.html';
+        });
+    });
+}
+    </script>
+</body>
+</html>

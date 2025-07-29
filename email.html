@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xác Nhận Đặt Phòng - Khách Sạn Đức Thịnh</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        
+        .email-container {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #2196F3, #21CBF3);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.2em;
+            font-weight: 700;
+        }
+        
+        .header .hotel-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .header .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+            margin: 0;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .greeting {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .greeting strong {
+            color: #2196F3;
+        }
+        
+        .info-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+            border-left: 5px solid #2196F3;
+        }
+        
+        .info-section h3 {
+            color: #333;
+            margin: 0 0 20px 0;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+        }
+        
+        .info-section h3 .icon {
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        
+        .info-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .info-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .info-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .info-list .label {
+            font-weight: 600;
+            color: #555;
+            min-width: 120px;
+        }
+        
+        .info-list .value {
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .customer-section {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+            border-left: 5px solid #1976d2;
+        }
+        
+        .contact-section {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 25px 0;
+            text-align: center;
+        }
+        
+        .contact-section h4 {
+            color: #333;
+            margin: 0 0 15px 0;
+            font-size: 1.2em;
+        }
+        
+        .contact-info {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .contact-item .icon {
+            margin-right: 8px;
+            font-size: 1.1em;
+        }
+        
+        .message {
+            font-size: 16px;
+            margin: 20px 0;
+            color: #555;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #e9ecef;
+        }
+        
+        .footer p {
+            margin: 0;
+            font-size: 16px;
+            color: #666;
+        }
+        
+        .footer .hotel-name {
+            color: #2196F3;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+            border: 2px solid #4caf50;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .highlight-box .icon {
+            font-size: 2em;
+            color: #4caf50;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .highlight-box p {
+            margin: 0;
+            font-weight: 600;
+            color: #2e7d32;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 20px 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .content {
+                padding: 20px 15px;
+            }
+            
+            .contact-info {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .info-list li {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            
+            .info-list .label {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+            <span class="hotel-icon">🏨</span>
+            <h1>Khách Sạn Đức Thịnh</h1>
+            <p class="subtitle">Xác Nhận Đặt Phòng</p>
+        </div>
+        
+        <!-- Content -->
+        <div class="content">
+            <!-- Greeting -->
+            <div class="greeting">
+                <p>Xin chào <strong>{{CustomerName}}</strong>,</p>
+                <p>Cảm ơn bạn đã đặt phòng tại khách sạn của chúng tôi. Dưới đây là thông tin đặt phòng của bạn:</p>
+            </div>
+            
+            <!-- Success Notification -->
+            <div class="highlight-box">
+                <span class="icon">✅</span>
+                <p>Đặt phòng của bạn đã được xác nhận thành công!</p>
+            </div>
+            
+            <!-- Booking Information -->
+            <div class="info-section">
+                <h3>
+                    <span class="icon">📋</span>
+                    Thông Tin Đặt Phòng
+                </h3>
+                <ul class="info-list">
+                    <li>
+                        <span class="label">Mã đặt phòng:</span>
+                        <span class="value">{{MaDatPhong}}</span>
+                    </li>
+                    <li>
+                        <span class="label">Số phòng:</span>
+                        <span class="value">{{SoPhong}}</span>
+                    </li>
+                    <li>
+                        <span class="label">Loại phòng:</span>
+                        <span class="value">{{LoaiPhong}}</span>
+                    </li>
+                    <li>
+                        <span class="label">Ngày nhận phòng:</span>
+                        <span class="value">{{NgayNhanPhong}}</span>
+                    </li>
+                    <li>
+                        <span class="label">Ngày trả phòng:</span>
+                        <span class="value">{{NgayTraPhong}}</span>
+                    </li>
+                    <li>
+                        <span class="label">Loại đặt phòng:</span>
+                        <span class="value">{{LoaiDatPhong}}</span>
+                    </li>
+                    <li>
+                        <span class="label">Ngày đặt:</span>
+                        <span class="value">{{BookingDate}}</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Customer Information -->
+            <div class="customer-section">
+                <h3>
+                    <span class="icon">👤</span>
+                    Thông Tin Khách Hàng
+                </h3>
+                <ul class="info-list">
+                    <li>
+                        <span class="label">Họ và tên:</span>
+                        <span class="value">{{CustomerName}}</span>
+                    </li>
+                    <li>
+                        <span class="label">Số điện thoại:</span>
+                        <span class="value">{{CustomerPhone}}</span>
+                    </li>
+                    <li>
+                        <span class="label">Email:</span>
+                        <span class="value">{{CustomerEmail}}</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Message -->
+            <div class="message">
+                <p>🎉 Chúng tôi rất vui được phục vụ bạn và sẽ liên hệ với bạn sớm nhất có thể để xác nhận thêm chi tiết.</p>
+                <p>📞 Nếu bạn có bất kỳ câu hỏi hoặc yêu cầu đặc biệt nào, vui lòng liên hệ với chúng tôi.</p>
+            </div>
+            
+            <!-- Contact Information -->
+            <div class="contact-section">
+                <h4>📞 Thông Tin Liên Hệ</h4>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <span class="icon">📱</span>
+                        <span>0123-456-789</span>
+                    </div>
+                    <div class="contact-item">
+                        <span class="icon">📧</span>
+                        <span>info@ductinh.com</span>
+                    </div>
+                    <div class="contact-item">
+                        <span class="icon">🏠</span>
+                        <span>123 Đường ABC, Q.1, TP.HCM</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div class="footer">
+                <p>Trân trọng,</p>
+                <p class="hotel-name">Đội ngũ Khách Sạn Đức Thịnh</p>
+                <p style="margin-top: 15px; font-size: 14px; color: #888;">
+                    🌟 Cảm ơn bạn đã tin tương và lựa chọn dịch vụ của chúng tôi!
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

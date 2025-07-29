@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Hệ thống quản lý khách sạn">
+    <meta name="author" content="">
+    <title>Quản lý người dùng - Admin</title>
+    <!-- Custom fonts -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <!-- Custom styles -->
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <!-- DataTables -->
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <style>
+        a { text-decoration: none; }
+        .sidebar-heading {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffffff;
+            background-color: #007bff;
+            text-align: center;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .sidebar-heading:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+        }
+        .table th, .table td { vertical-align: middle; }
+    </style>
+</head>
+<body id="page-top">
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+            <hr class="sidebar-divider my-0">
+            <li class="nav-item active"></li>
+            <hr class="sidebar-divider">
+            <a href="admin.html">
+                <div class="sidebar-heading">Admin</div>
+            </a>
+            <hr class="sidebar-divider">
+            <div class="sidebar-heading">Quản lý</div>
+            <li class="nav-item">
+                <a class="nav-link" href="rooms.html">
+                    <i class="fas fa-bed"></i>
+                    <span>Danh sách phòng</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="guests.html">
+                    <i class="fas fa-users"></i>
+                    <span>Người dùng</span>
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link" href="bookings.html">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Đặt phòng</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="room-types.html">
+                    <i class="fas fa-door-open"></i>
+                    <span>Loại phòng</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="services.html">
+                    <i class="fas fa-concierge-bell"></i>
+                    <span>Dịch vụ</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="revenue.html">
+                    <i class="fas fa-dollar-sign"></i>
+                    <span>Doanh thu</span>
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link" href="booking-details.html">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Chi tiết đặt phòng</span>
+                </a>
+            </li>
+            <hr class="sidebar-divider d-none d-md-block">
+            <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
+        </ul>
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <form class="navbar-search d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100">
+                        <div class="input-group">
+                            <input type="text" id="searchQuery" class="form-control bg-light border-0 small"
+                                   placeholder="Tìm kiếm người dùng..." aria-label="Search">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit" onclick="search()">
+                                    <i class="fas fa-search fa-sm"></i> Tìm
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    <ul class="navbar-nav d-flex align-items-center">
+                        <li class="nav-item me-3">
+                            <a class="nav-link" href="/khachsan.html">Trang đặt phòng</a>
+                        </li>
+                        <li class="nav-item me-3">
+                            <span class="nav-link" id="username">Chưa đăng nhập</span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="logout()">Đăng xuất</a>
+                        </li>
+                    </ul>
+                </nav>
+                <div class="container-fluid">
+                    <h1 class="h3 mb-4 text-gray-800">Quản lý người dùng</h1>
+                    <div class="mb-3">
+                    </div>
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Danh sách người dùng</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="userTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Mã người dùng</th>
+                                            <th>Họ tên</th>
+                                            <th>Email</th>
+                                            <th>Số điện thoại</th>
+                                            <th>Vai trò</th>
+                                            <th>Hành động</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+
+    <!-- Modal Sửa người dùng -->
+    <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editUserModalLabel">Sửa người dùng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editUserForm">
+                        <input type="hidden" id="editMaNguoiDung">
+                        <div class="mb-3">
+                            <label for="editHoTen" class="form-label">Họ tên</label>
+                            <input type="text" class="form-control" id="editHoTen" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="editEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editMatKhau" class="form-label">Mật khẩu mới (để trống nếu không đổi)</label>
+                            <input type="password" class="form-control" id="editMatKhau">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editSoDienThoai" class="form-label">Số điện thoại</label>
+                            <input type="text" class="form-control" id="editSoDienThoai">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editVaiTro" class="form-label">Vai trò</label>
+                            <select class="form-control" id="editVaiTro" required>
+                                <option value="Khách hàng">Khách hàng</option>
+                                <option value="Nhân viên">Nhân viên</option>
+                                <option value="Quản trị">Quản trị</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Cập nhật</button>
+                    </form>
+                    <div id="editUserMessage" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="https://cdn.startbootstrap.com/sb-admin-2/4.1.4/js/sb-admin-2.min.js"></script>
+    <script src="https://cdn.startbootstrap.com/sb-admin-2/4.1.4/js/demo/chart-area-demo.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
+    <script src="js/admin.js"></script>
+    <script>
+        $(document).ready(function () {
+            const token = localStorage.getItem('jwtToken');
+            const vaitro = localStorage.getItem('vaitro');
+            if (!token || vaitro !== 'Quản trị') {
+                window.location.href = 'login.html';
+                return;
+            }
+            loadUsers();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1587 @@
+﻿/* Import Roboto font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+/* CSS Variables for Light/Dark Mode */
+:root {
+    --bg-color: #f0f0f0;
+    --text-color: #1a202c;
+    --text-secondary: #4a5568;
+    --header-bg: linear-gradient(135deg, #2c3e50, #4a69bd);
+    --sidebar-bg: linear-gradient(180deg, #dfe6e9, #b2bec3);
+    --room-bg: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+    --room-occupied-bg: linear-gradient(135deg, #55efc4, #00b894);
+    --card-bg: #ffffff;
+    --button-bg: linear-gradient(135deg, #74b9ff, #3498db);
+    --button-hover-bg: linear-gradient(135deg, #3498db, #74b9ff);
+    --cancel-bg: linear-gradient(135deg, #ff7675, #d63031);
+    --cancel-hover-bg: linear-gradient(135deg, #d63031, #ff7675);
+    --highlight-color: #c0392b;
+    --shadow-color: rgba(0, 0, 0, 0.2);
+    --border-radius: 8px;
+    --transition: all 0.3s ease;
+    --font-size-base: 16px;
+}
+
+body.dark-mode {
+    --bg-color: #1a202c !important;
+    --text-color: #e2e8f0 !important;
+    --text-secondary: #a0aec0 !important;
+    --header-bg: linear-gradient(135deg, #1e293b, #334155) !important;
+    --sidebar-bg: linear-gradient(180deg, #2d3748, #4a5568) !important;
+    --room-bg: linear-gradient(135deg, #4a5568, #718096) !important;
+    --room-occupied-bg: linear-gradient(135deg, #38a169, #68d391) !important;
+    --card-bg: #2d3748 !important;
+    --button-bg: linear-gradient(135deg, #63b3ed, #4299e1) !important;
+    --button-hover-bg: linear-gradient(135deg, #4299e1, #63b3ed) !important;
+    --cancel-bg: linear-gradient(135deg, #f687b3, #ed64a6) !important;
+    --cancel-hover-bg: linear-gradient(135deg, #ed64a6, #f687b3) !important;
+    --highlight-color: #f6ad55 !important;
+    --shadow-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+body {
+    background-color: var(--bg-color) !important;
+    color: var(--text-color) !important;
+    font-size: var(--font-size-base);
+    transition: var(--transition);
+    line-height: 1.5;
+}
+
+/* Utility Classes */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* Header */
+.header {
+    background: var(--header-bg);
+    color: #ffffff;
+    padding: 8px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px var(--shadow-color);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header .left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header .left img {
+    height: 30px;
+}
+
+.header .left .info {
+    font-size: clamp(10px, 2vw, 12px);
+}
+
+.header .right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header .right .time {
+    font-size: 12px;
+}
+
+.header .right .notification {
+    position: relative;
+    cursor: pointer;
+}
+
+.header .right .notification .bell-icon {
+    font-size: 16px;
+}
+
+.header .right .notification .badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: var(--highlight-color);
+    color: #ffffff;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 10px;
+}
+
+.header .right .notification .dropdown {
+    display: none;
+    position: absolute;
+    top: 30px;
+    right: 0;
+    width: 300px;
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 8px var(--shadow-color);
+    z-index: 1000;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.header .right .notification .dropdown.show {
+    display: none;
+}
+.header .right .notification .dropdown .notification-item {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    font-size: 14px;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.header .right .notification .dropdown .notification-item.unread {
+    background-color: #f0f8ff;
+}
+
+.header .right .notification .dropdown .notification-item:hover {
+    background-color: var(--bg-color);
+}
+
+.header .right button {
+    background: var(--button-bg);
+    color: #ffffff;
+    border: none;
+    padding: 6px 12px;
+    cursor: pointer;
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    transition: var(--transition);
+    transform: scale(1);
+}
+
+.header .right button:hover,
+.header .right button:focus-visible {
+    background: var(--button-hover-bg);
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+.header .right button:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+.header .right .toggle-dark-mode {
+    background: linear-gradient(135deg, #718096, #4a5568);
+}
+
+.header .right .toggle-dark-mode:hover,
+.header .right .toggle-dark-mode:focus-visible {
+    background: linear-gradient(135deg, #4a5568, #718096);
+}
+
+/* Main Layout */
+.main {
+    display: flex;
+    height: calc(100vh - 60px);
+    position: relative;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 270px;
+    background: var(--sidebar-bg);
+    padding: 25px;
+    border-inline-end: 1px solid #ddd;
+    box-shadow: 2px 0 8px var(--shadow-color);
+    overflow-y: auto;
+}
+
+.sidebar h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: var(--text-color);
+    text-transform: uppercase;
+}
+
+.sidebar .stats {
+    font-size: 15px;
+    color: var(--text-color);
+}
+
+.sidebar .stats .stat-card {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 12px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px var(--shadow-color);
+    transition: var(--transition);
+    will-change: transform, box-shadow;
+}
+
+.sidebar .stats .stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+.sidebar .stats .stat-card p {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sidebar .stats .highlight {
+    color: var(--highlight-color);
+    font-weight: 700;
+}
+
+/* Room List */
+.room-list {
+    flex: 1;
+    padding: 20px;
+    background-color: var(--card-bg);
+    overflow-y: auto;
+}
+
+.room-list .toolbar {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.room-list .toolbar button {
+    background: var(--button-bg);
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: var(--border-radius);
+    font-size: 15px;
+    transition: var(--transition);
+    transform: scale(1);
+}
+
+.room-list .toolbar button:hover,
+.room-list .toolbar button:focus-visible {
+    background: var(--button-hover-bg);
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+.room-list .toolbar button:focus-visible {
+    outline: 2px solid var(--highlight-color);
+    outline-offset: 2px;
+}
+
+.room-list .rooms {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 24px;
+}
+
+.room-list .room {
+    background: var(--room-bg);
+    color: var(--text-color);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 4px 8px var(--shadow-color);
+    border: 2px solid transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 3/4;
+    will-change: transform, box-shadow;
+}
+
+.room-list .room.occupied {
+    background: var(--room-occupied-bg);
+}
+
+.room-list .room:hover,
+.room-list .room:focus-visible {
+    transform: translateY(-5px);
+    border-color: #3498db;
+    box-shadow: 0 8px 16px var(--shadow-color);
+}
+
+.room-list .room:focus-visible {
+    outline: 2px solid #3498db;
+    outline-offset: 2px;
+}
+
+.room-list .room .content {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 10px;
+}
+
+.room-list .room .door-icon {
+    font-size: 50px;
+    margin-bottom: 10px;
+    color: var(--text-color);
+    transition: var(--transition);
+}
+
+.room-list .room:hover .door-icon,
+.room-list .room:focus-visible .door-icon {
+    color: #3498db;
+}
+
+.room-list .room .name {
+    font-size: 20px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.room-list .room .type,
+.room-list .room .price {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.room-list .room .status {
+    font-size: 12px;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: var(--text-color);
+    font-weight: 700;
+}
+
+/* Modal Base Styles */
+.modal,
+.booking-modal,
+.service-modal,
+.billing-modal,
+.group-modal,
+.merge-bill-modal,
+.shift-end-modal,
+.confirm-modal {
+    display: none;
+    position: fixed;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: var(--border-radius);
+    box-shadow: 0 12px 32px var(--shadow-color);
+    padding: 24px;
+    z-index: 1001;
+    animation: fadeIn 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+body.dark-mode .modal,
+body.dark-mode .booking-modal,
+body.dark-mode .service-modal,
+body.dark-mode .billing-modal,
+body.dark-mode .group-modal,
+body.dark-mode .merge-bill-modal,
+body.dark-mode .shift-end-modal,
+body.dark-mode .confirm-modal {
+    background: rgba(45, 55, 72, 0.9);
+}
+
+.modal[aria-hidden="false"],
+.booking-modal[aria-hidden="false"],
+.service-modal[aria-hidden="false"],
+.billing-modal[aria-hidden="false"],
+.group-modal[aria-hidden="false"],
+.merge-bill-modal[aria-hidden="false"],
+.shift-end-modal[aria-hidden="false"],
+.confirm-modal[aria-hidden="false"] {
+    display: block;
+}
+
+.modal h3,
+.booking-modal h3,
+.service-modal h3,
+.billing-modal h3,
+.group-modal h3,
+.merge-bill-modal h3,
+.shift-end-modal h3,
+.confirm-modal h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--highlight-color);
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding-bottom: 10px;
+}
+
+.modal .close-btn,
+.booking-modal .close-btn,
+.service-modal .close-btn,
+.billing-modal .close-btn,
+.group-modal .close-btn,
+.merge-bill-modal .close-btn,
+.shift-end-modal .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #999;
+    transition: var(--transition);
+}
+
+.modal .close-btn:hover,
+.modal .close-btn:focus-visible,
+.booking-modal .close-btn:hover,
+.booking-modal .close-btn:focus-visible,
+.service-modal .close-btn:hover,
+.service-modal .close-btn:focus-visible,
+.billing-modal .close-btn:hover,
+.billing-modal .close-btn:focus-visible,
+.group-modal .close-btn:hover,
+.group-modal .close-btn:focus-visible,
+.merge-bill-modal .close-btn:hover,
+.merge-bill-modal .close-btn:focus-visible,
+.shift-end-modal .close-btn:hover,
+.shift-end-modal .close-btn:focus-visible {
+    color: var(--text-color);
+}
+
+.modal .close-btn:focus-visible,
+.booking-modal .close-btn:focus-visible,
+.service-modal .close-btn:focus-visible,
+.billing-modal .close-btn:focus-visible,
+.group-modal .close-btn:focus-visible,
+.merge-bill-modal .close-btn:focus-visible,
+.shift-end-modal .close-btn:focus-visible {
+    outline: 2px solid var(--highlight-color);
+    outline-offset: 2px;
+}
+
+/* Specific Modal Styles */
+.modal {
+    top: 20px;
+    left: 20px;
+    width: 300px;
+}
+
+.modal .info {
+    font-size: 14px;
+    color: var(--text-color);
+}
+
+.modal .info p {
+    margin: 5px 0;
+}
+
+.modal .info .highlight {
+    color: var(--highlight-color);
+    font-weight: 700;
+}
+
+.modal .actions {
+    margin-top: 15px;
+    text-align: end;
+}
+
+.modal .actions button {
+    background: var(--button-bg);
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: var(--border-radius);
+    font-size: 15px;
+    transition: var(--transition);
+    transform: scale(1);
+}
+
+.modal .actions button:hover,
+.modal .actions button:focus-visible {
+    background: var(--button-hover-bg);
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+.modal .actions button:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+.booking-modal,
+.service-modal,
+.group-modal,
+.shift-end-modal {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(90%, 400px);
+}
+
+.booking-modal .form,
+.service-modal .form,
+.group-modal .form,
+.shift-end-modal .form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.booking-modal .form label,
+.service-modal .form label,
+.group-modal .form label,
+.shift-end-modal .form label {
+    font-size: 14px;
+    color: var(--text-color);
+}
+
+.booking-modal .form input,
+.booking-modal .form select,
+.service-modal .form input,
+.service-modal .form select,
+.group-modal .form input,
+.group-modal .form select,
+.shift-end-modal .form select,
+.shift-end-modal .form textarea {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    transition: var(--transition);
+}
+
+.booking-modal .form input:focus,
+.booking-modal .form select:focus,
+.service-modal .form input:focus,
+.service-modal .form select:focus,
+.group-modal .form input:focus,
+.group-modal .form select:focus,
+.shift-end-modal .form select:focus,
+.shift-end-modal .form textarea:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+    outline: none;
+}
+
+.booking-modal .form .cccd-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.booking-modal .form .cccd-actions button {
+    background: var(--button-bg);
+    color: #ffffff;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    transition: var(--transition);
+    transform: scale(1);
+}
+
+.booking-modal .form .cccd-actions button:hover,
+.booking-modal .form .cccd-actions button:focus-visible {
+    background: var(--button-hover-bg);
+    transform: scale(1.05);
+}
+
+.booking-modal .form .cccd-actions button:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+.booking-modal .form .actions,
+.service-modal .form .actions,
+.group-modal .form .actions,
+.shift-end-modal .form .actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.booking-modal .form .actions button,
+.service-modal .form .actions button,
+.group-modal .form .actions button,
+.shift-end-modal .form .actions button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 15px;
+    transition: var(--transition);
+    transform: scale(1);
+}
+
+.booking-modal .form .actions .book-btn,
+.service-modal .form .actions .add-btn,
+.group-modal .form .actions .add-btn,
+.shift-end-modal .form .actions .confirm-btn {
+    background: var(--button-bg);
+    color: #ffffff;
+}
+
+.booking-modal .form .actions .book-btn:hover,
+.booking-modal .form .actions .book-btn:focus-visible,
+.service-modal .form .actions .add-btn:hover,
+.service-modal .form .actions .add-btn:focus-visible,
+.group-modal .form .actions .add-btn:hover,
+.group-modal .form .actions .add-btn:focus-visible,
+.shift-end-modal .form .actions .confirm-btn:hover,
+.shift-end-modal .form .actions .confirm-btn:focus-visible {
+    background: var(--button-hover-bg);
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+.booking-modal .form .actions .book-btn:focus-visible,
+.service-modal .form .actions .add-btn:focus-visible,
+.group-modal .form .actions .add-btn:focus-visible,
+.shift-end-modal .form .actions .confirm-btn:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+.booking-modal .form .actions .cancel-btn,
+.service-modal .form .actions .cancel-btn,
+.group-modal .form .actions .cancel-btn,
+.shift-end-modal .form .actions .cancel-btn {
+    background: var(--cancel-bg);
+    color: #ffffff;
+}
+
+.booking-modal .form .actions .cancel-btn:hover,
+.booking-modal .form .actions .cancel-btn:focus-visible,
+.service-modal .form .actions .cancel-btn:hover,
+.service-modal .form .actions .cancel-btn:focus-visible,
+.group-modal .form .actions .cancel-btn:hover,
+.group-modal .form .actions .cancel-btn:focus-visible,
+.shift-end-modal .form .actions .cancel-btn:hover,
+.shift-end-modal .form .actions .cancel-btn:focus-visible {
+    background: var(--cancel-hover-bg);
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+.booking-modal .form .actions .cancel-btn:focus-visible,
+.service-modal .form .actions .cancel-btn:focus-visible,
+.group-modal .form .actions .cancel-btn:focus-visible,
+.shift-end-modal .form .actions .cancel-btn:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+.billing-modal,
+.merge-bill-modal {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(95%, 800px);
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.billing-modal .info,
+.merge-bill-modal .info {
+    font-size: 14px;
+    color: var(--text-color);
+    margin-bottom: 20px;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: var(--border-radius);
+}
+
+.billing-modal .info p,
+.merge-bill-modal .info p {
+    margin: 5px 0;
+}
+
+.billing-modal .info .highlight,
+.merge-bill-modal .info .highlight {
+    color: var(--highlight-color);
+    font-weight: 700;
+}
+
+.billing-modal table,
+.merge-bill-modal table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.billing-modal table th,
+.billing-modal table td,
+.merge-bill-modal table th,
+.merge-bill-modal table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-color);
+}
+
+.billing-modal table th,
+.merge-bill-modal table th {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+.billing-modal .summary,
+.merge-bill-modal .summary {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    margin: 10px 0;
+}
+
+.billing-modal .summary p,
+.merge-bill-modal .summary p {
+    margin: 5px 0;
+}
+
+.billing-modal .summary .highlight,
+.merge-bill-modal .summary .highlight {
+    color: var(--highlight-color);
+    font-weight: 700;
+}
+
+.billing-modal .actions,
+.merge-bill-modal .actions {
+    text-align: end;
+}
+
+.billing-modal .actions button,
+.merge-bill-modal .actions button {
+    background: var(--button-bg);
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: var(--border-radius);
+    font-size: 15px;
+    transition: var(--transition);
+    transform: scale(1);
+}
+
+.billing-modal .actions button:hover,
+.billing-modal .actions button:focus-visible,
+.merge-bill-modal .actions button:hover,
+.merge-bill-modal .actions button:focus-visible {
+    background: var(--button-hover-bg);
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+.billing-modal .actions button:focus-visible,
+.merge-bill-modal .actions button:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+.merge-bill-modal .info label[for="group-select"] {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.merge-bill-modal .info #group-select {
+    width: 50%;
+    padding: 5px 10px;
+    font-size: 15px;
+    color: var(--text-color);
+    background-color: var(--card-bg);
+    border: 1px solid #ccc;
+    border-radius: var(--border-radius);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.merge-bill-modal .info #group-select:hover,
+.merge-bill-modal .info #group-select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.merge-bill-modal .info #group-select:disabled {
+    background-color: #e9ecef;
+    color: #6c757d;
+    cursor: not-allowed;
+}
+
+.group-modal .form .room-selection {
+    max-height: 150px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 5px;
+    border-radius: var(--border-radius);
+}
+
+.group-modal .form .room-selection label {
+    display: block;
+    margin: 5px 0;
+}
+
+/* Confirm Modal */
+.confirm-modal {
+    background-color: rgba(0, 0, 0, 0.5);
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.confirm-modal-content {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: 0 8px 24px var(--shadow-color);
+    max-width: 400px;
+    width: 90%;
+    margin: 15% auto;
+}
+
+.modal-header {
+    padding: 15px;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+}
+
+.modal-header .close-confirm-modal {
+    font-size: 18px;
+    cursor: pointer;
+    color: #999;
+    background: none;
+    border: none;
+    transition: var(--transition);
+}
+
+.modal-header .close-confirm-modal:hover,
+.modal-header .close-confirm-modal:focus-visible {
+    color: var(--text-color);
+}
+
+.modal-header .close-confirm-modal:focus-visible {
+    outline: 2px solid var(--highlight-color);
+    outline-offset: 2px;
+}
+
+.modal-body {
+    padding: 15px;
+    font-size: 14px;
+    color: var(--text-color);
+}
+
+.modal-footer {
+    padding: 15px;
+    text-align: end;
+    border-top: 1px solid #e9ecef;
+}
+
+.modal-footer .btn {
+    padding: 8px 15px;
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    transition: var(--transition);
+}
+
+.modal-footer .btn-success {
+    background: var(--button-bg);
+    border: none;
+    color: #ffffff;
+}
+
+.modal-footer .btn-success:hover,
+.modal-footer .btn-success:focus-visible {
+    background: var(--button-hover-bg);
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+.modal-footer .btn-success:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+.modal-footer .btn-secondary {
+    background: var(--cancel-bg);
+    border: none;
+    color: #ffffff;
+}
+
+.modal-footer .btn-secondary:hover,
+.modal-footer .btn-secondary:focus-visible {
+    background: var(--cancel-hover-bg);
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+.modal-footer .btn-secondary:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+/* Pagination */
+.pagination-container {
+    margin: 20px 0;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+
+.pagination .page-item {
+    margin: 0;
+}
+
+.pagination .page-link {
+    padding: 8px 14px;
+    font-size: 15px;
+    color: var(--text-color);
+    background-color: var(--card-bg);
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+}
+
+.pagination .page-link:hover,
+.pagination .page-link:focus-visible {
+    background: var(--button-bg);
+    color: #ffffff;
+    border-color: #3498db;
+}
+
+.pagination .page-link:focus-visible {
+    outline: 2px solid #3498db;
+    outline-offset: 2px;
+}
+
+.pagination .page-item.active .page-link {
+    background: var(--button-bg);
+    color: #ffffff;
+    border-color: #3498db;
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #999;
+    background-color: var(--bg-color);
+    border-color: #ddd;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+/* Toast Notifications */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+:root {
+    --border-radius: 8px; /* Định nghĩa giá trị mặc định cho biến */
+    --shadow-color: rgba(0, 0, 0, 0.2); /* Định nghĩa giá trị mặc định cho biến */
+}
+
+.toast {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    border-radius: var(--border-radius, 8px); /* Giá trị dự phòng */
+    box-shadow: 0 4px 12px var(--shadow-color, rgba(0, 0, 0, 0.2)); /* Giá trị dự phòng */
+    color: #ffffff;
+    font-size: 14px;
+    min-width: 300px;
+    max-width: 400px;
+    opacity: 1;
+    transform: translateX(0);
+    animation: slideIn 0.5s ease forwards;
+    pointer-events: auto;
+    will-change: transform, opacity; /* Giữ lại nếu cần tối ưu animation */
+}
+
+/* Định nghĩa keyframes cho animation slideIn */
+@keyframes slideIn {
+    from {
+        transform: translateX(100%); /* Trượt từ bên phải */
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.toast.success {
+    background: var(--room-occupied-bg);
+}
+
+.toast.error {
+    background: var(--cancel-bg);
+}
+
+.toast .icon {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+.toast .message {
+    flex: 1;
+}
+
+.toast .close {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 16px;
+    margin-left: 10px;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: var(--transition);
+}
+
+
+.toast .close:hover,
+.toast .close:focus-visible {
+    opacity: 1;
+}
+
+.toast .close:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+.toast.hide {
+    animation: slideOut 0.5s ease forwards;
+}
+
+/* CCCD Scan Container */
+#scan-container {
+    text-align: center;
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: var(--border-radius);
+    margin-top: 10px;
+}
+
+#video {
+    border: 1px solid #ccc;
+    border-radius: var(--border-radius);
+    max-width: 100%;
+}
+
+#stop-scan {
+    background-color: #d33;
+    color: #ffffff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    margin-top: 5px;
+    transition: var(--transition);
+}
+
+#stop-scan:hover,
+#stop-scan:focus-visible {
+    background-color: #b00;
+}
+
+#stop-scan:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOut {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .main {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .sidebar {
+        width: 100%;
+        padding: 15px;
+    }
+
+    .room-list .rooms {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+
+    .room-list .room {
+        aspect-ratio: 2/3;
+    }
+
+    .room-list .room .door-icon {
+        font-size: 40px;
+    }
+
+    .room-list .room .name {
+        font-size: 16px;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px;
+    }
+
+    .header .right {
+        margin-top: 10px;
+        flex-wrap: wrap;
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .modal,
+    .booking-modal,
+    .service-modal,
+    .group-modal,
+    .shift-end-modal {
+        width: 90%;
+        left: 50%;
+        transform: translate(-50%, 0);
+        top: 10px;
+    }
+
+    .billing-modal,
+    .merge-bill-modal {
+        width: 95%;
+    }
+
+    .merge-bill-modal .info #group-select {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --font-size-base: 14px;
+    }
+
+    .header .left .info {
+        font-size: 10px;
+    }
+
+    .room-list .toolbar button {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+
+    .pagination .page-link {
+        padding: 6px 10px;
+        font-size: 14px;
+    }
+}
+/* Modal chung */
+.group-modal,
+.merge-bill-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Hiệu ứng fade-in */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translate(-50%, -60%); }
+    to { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+/* Nút đóng */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #666;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close-btn:hover {
+    color: #d33;
+}
+
+
+
+/* Merge bill modal */
+.merge-bill-modal .info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.merge-bill-modal .info label {
+    font-size: 14px;
+    color: #169773;
+    font-weight: 500;
+}
+
+.merge-bill-modal .info select {
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #179cc1;
+    border-radius: 6px;
+    outline: none;
+}
+
+.merge-bill-modal .info p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.merge-bill-modal .info p span {
+    font-weight: 500;
+    color: #000;
+}
+
+/* Bảng trong merge-bill-modal */
+.merge-bill-modal table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+.merge-bill-modal th,
+.merge-bill-modal td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+    font-size: 14px;
+}
+
+.merge-bill-modal th {
+    background-color: #f8f8f8;
+    color: #333;
+    font-weight: 500;
+}
+
+.merge-bill-modal td {
+    color: #0a6b2f;
+}
+
+/* Summary */
+.merge-bill-modal .summary {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.merge-bill-modal .summary p {
+    margin: 5px 0;
+    color: #333;
+}
+
+.merge-bill-modal .summary .highlight {
+    font-weight: bold;
+    color: rgb(51, 221, 133);
+}
+
+/* Overlay cho modal */
+.group-modal::before,
+.merge-bill-modal::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .group-modal,
+    .merge-bill-modal {
+        width: 95%;
+        padding: 15px;
+    }
+
+    .group-modal h3,
+    .merge-bill-modal h3 {
+        font-size: 20px;
+    }
+
+    .merge-bill-modal table {
+        font-size: 12px;
+    }
+
+    .merge-bill-modal th,
+    .merge-bill-modal td {
+        padding: 8px;
+    }
+}
+
+/* Group Form Styles */
+#group-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+/* Form Labels */
+#group-form label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-color);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Form Inputs */
+#group-form input {
+    padding: 12px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    transition: var(--transition);
+    outline: none;
+}
+
+#group-form input:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 6px rgba(52, 152, 219, 0.3);
+}
+
+/* Placeholder Styling */
+#group-form input::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
+/* Actions Container */
+#group-form .actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+/* Buttons */
+#group-form .actions button {
+    padding: 10px 24px;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    transform: scale(1);
+}
+
+/* Add Button */
+#group-form #add-group-btn {
+    background: var(--button-bg);
+    color: #ffffff;
+}
+
+#group-form #add-group-btn:hover,
+#group-form #add-group-btn:focus-visible {
+    background: var(--button-hover-bg);
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+#group-form #add-group-btn:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+/* Cancel Button */
+#group-form #cancel-group-btn {
+    background: var(--cancel-bg);
+    color: #ffffff;
+}
+
+#group-form #cancel-group-btn:hover,
+#group-form #cancel-group-btn:focus-visible {
+    background: var(--cancel-hover-bg);
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+#group-form #cancel-group-btn:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    #group-form {
+        padding: 15px;
+        gap: 12px;
+    }
+
+    #group-form label {
+        font-size: 12px;
+    }
+
+    #group-form input {
+        padding: 10px;
+        font-size: 13px;
+    }
+
+    #group-form .actions button {
+        padding: 8px 18px;
+        font-size: 13px;
+    }
+}
+
+.filter-section {
+    background: var(--card-bg);
+    padding: 10px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+.filter-section label {
+    font-size: 14px;
+    color: var(--text-color);
+    margin-right: 5px;
+}
+
+.filter-section select {
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    cursor: pointer;
+}
+
+.filter-section button {
+    background: var(--button-bg);
+    color: #ffffff;
+    border: none;
+    padding: 5px 15px;
+    cursor: pointer;
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    transition: var(--transition);
+}
+
+.filter-section button:hover,
+.filter-section button:focus-visible {
+    background: var(--button-hover-bg);
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+/* Áp dụng cho cả button và a.nav-button */
+.nav-button {
+    background: var(--button-bg);
+    color: #fff !important;
+    border: none;
+    padding: 6px 12px;
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none !important;
+    transition: var(--transition);
+    box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+.nav-button:hover,
+.nav-button:focus-visible {
+    background: var(--button-hover-bg);
+    color: #fff !important;
+    text-decoration: none !important;
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+.nav-button:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
