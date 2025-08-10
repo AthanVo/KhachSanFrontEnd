@@ -25,7 +25,7 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background: 
+    background:
         radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
         radial-gradient(circle at 80% 20%, rgba(255, 118, 117, 0.15) 0%, transparent 50%),
         radial-gradient(circle at 40% 40%, rgba(120, 119, 198, 0.15) 0%, transparent 50%);
@@ -173,8 +173,15 @@ body::before {
 }
 
 @keyframes gradientShift {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
+
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
 }
 
 .booking-form h2 {
@@ -441,7 +448,7 @@ body::before {
         grid-template-columns: 1fr;
         gap: 30px;
     }
-    
+
     .booking-form {
         position: relative;
         top: auto;
@@ -456,21 +463,21 @@ body::before {
         text-align: center;
         gap: 15px;
     }
-    
+
     .header h1 {
         font-size: 22px;
     }
-    
+
     .main {
         padding: 10px;
     }
-    
+
     .booking-form,
     .rooms-list {
         padding: 25px;
         margin: 10px;
     }
-    
+
     .user-info {
         position: relative;
         top: auto;
@@ -478,7 +485,7 @@ body::before {
         margin: 10px;
         border-radius: 15px;
     }
-    
+
     .footer {
         margin: 20px 10px 10px;
         padding: 30px 20px;
@@ -487,8 +494,15 @@ body::before {
 
 /* Loading Animation */
 @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
 }
 
 .loading {
@@ -520,6 +534,7 @@ body::before {
         opacity: 0;
         transform: translateY(30px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -544,7 +559,7 @@ select:focus {
     .room-card {
         border-width: 3px;
     }
-    
+
     .booking-form input,
     .booking-form select {
         border-width: 3px;

@@ -1,943 +1,135 @@
-
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nhập Thông Tin Đoàn</title>
-    <link rel="icon" href="favicon.ico">
-    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="http://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <link rel="stylesheet" href="css/group.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nhập Thông Tin Đoàn</title>
+  <link rel="icon" href="favicon.ico">
+  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="http://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <link rel="stylesheet" href="css/group.css">
 </head>
+
 <body>
+  <div class="container">
+    <h2>QUẢN LÝ THÔNG TIN ĐOÀN</h2>
 
-    <div class="container">
-        <h2>QUẢN LÝ THÔNG TIN ĐOÀN</h2>
-
-        <div class="row">
-            <label for="group-name">Tên đoàn:</label>
-            <input type="text" id="group-name" readonly>
-
-            <label for="group-representative">Người đại diện:</label>
-            <input type="text" id="group-representative" readonly>
-
-            <label for="group-phone">Số điện thoại:</label>
-            <input type="text" id="group-phone" readonly>
-
-            <label for="checkin-date">Ngày bắt đầu nhận:</label>
-            <input type="date" id="checkin-date" required>
-
-            <label for="checkout-date">Ngày trả phòng:</label>
-            <input type="date" id="checkout-date" required>
-        </div>
-
-        <!-- Phần chọn phòng cho nhóm -->
-        <div class="room-selection-section">
-            <h3>Chọn phòng cho nhóm</h3>
-            <div class="room-selection" id="room-selection">
-                <!-- Danh sách phòng sẽ được thêm bằng JavaScript -->
-            </div>
-            <div class="actions" style="margin-top: 15px; display: flex; justify-content: flex-end; gap: 15px;">
-                <button onclick="saveRoomsForGroup()" style="background-color: #28a745;">Lưu phòng</button>
-                <button id="back-btn" aria-label="Trở về trang chủ">Trở về trang chủ</button>
-            </div>
-        </div>
-
-        <!-- Phần nhập thông tin khách -->
-        <div class="qr-section">
-            <div class="qr-box">
-                <img id="qr-image" src="http://via.placeholder.com/100" alt="Mã QR khách">
-            </div>
-            <div class="info-box" id="info-box">
-                <p><strong>CCCD:</strong> <span id="cccd-number">Chưa quét</span></p>
-                <p><strong>Họ tên:</strong> <span id="customer-name">Chưa quét</span></p>
-                <p><strong>Địa chỉ:</strong> <span id="customer-address">Chưa quét</span></p>
-                <p><strong>Quốc tịch:</strong> <span id="customer-nationality">Chưa quét</span></p>
-            </div>
-            <div class="button-group">
-                <button id="scan-btn" aria-label="Quét CCCD">Quét CCCD</button>
-                <button id="add-btn" aria-label="Thêm khách">Thêm</button>
-                <button id="skip-btn" aria-label="Bỏ qua">Bỏ qua</button>
-            </div>
-        </div>
-
-        <div class="tables-wrapper">
-            <div class="customer-table">
-                <h3>Danh sách khách theo đoàn</h3>
-                <table id="customer-table">
-                    <thead>
-                        <tr>
-                            <th>STT</th>
-                            <th>Họ tên</th>
-                            <th>Giới tính</th>
-                            <th>CCCD</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-
-            <div class="action-buttons">
-                <button id="move-right" aria-label="Chuyển khách sang phòng">➡️</button>
-                <button id="move-left" aria-label="Chuyển khách về danh sách">⬅️</button>
-            </div>
-
-            <div class="room-table">
-                <div class="room-select">
-                    <label for="room-select">Chọn phòng:</label>
-                    <select id="room-select">
-                        <option value="">-- Chọn phòng --</option>
-                    </select>
-                </div>
-                <h3>Danh sách khách trong phòng</h3>
-                <table id="room-table">
-                    <thead>
-                        <tr>
-                            <th>STT</th>
-                            <th>Họ tên</th>
-                            <th>Giới tính</th>
-                            <th>CCCD</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="save-button">
-            <button id="save-btn" aria-label="Lưu thông tin">Lưu khách</button>
-        </div>
+    <div class="row">
+      <label for="group-name">Tên đoàn:</label>
+      <input type="text" id="group-name" readonly>
+      <label for="group-representative">Người đại diện:</label>
+      <input type="text" id="group-representative" readonly>
+      <label for="group-phone">Số điện thoại:</label>
+      <input type="text" id="group-phone" readonly>
+      <label for="checkin-date">Ngày bắt nhận phòng:</label>
+      <input type="date" id="checkin-date" required>
+      <label for="checkout-date">Ngày trả phòng:</label>
+      <input type="date" id="checkout-date" required>
     </div>
 
-    <script src="http://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="http://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
-    <script>
-        let maNhomDatPhong = null;
-        let currentRoomCustomers = {};
-
-        // Hàm phát giọng nói
-        function speak(message) {
-          if ('speechSynthesis' in window) {
-            const utterance = new SpeechSynthesisUtterance(message);
-            utterance.lang = 'vi-VN';
-            utterance.rate = 1;
-            utterance.pitch = 1;
-            utterance.volume = 1;
-
-            window.speechSynthesis.speak(utterance);
-
-            utterance.onerror = (event) => {
-              console.error('Lỗi phát giọng nói:', event.error);
-              if (event.error === 'not-allowed' || event.error === 'language-not-supported') {
-                const fallbackUtterance = new SpeechSynthesisUtterance(message);
-                fallbackUtterance.lang = 'en-US';
-                window.speechSynthesis.speak(fallbackUtterance);
-              }
-            };
-          } else {
-            console.warn('Trình duyệt không hỗ trợ Web Speech API!');
-            showToast('Trình duyệt không hỗ trợ phát giọng nói!', 'warning');
-          }
-        }
-
-        // Get query parameter
-        function getQueryParam(param) {
-          const urlParams = new URLSearchParams(window.location.search);
-          return urlParams.get(param);
-        }
-
-        // Show toast notification
-        function showToast(message, type = 'success') {
-          Swal.fire({
-            toast: true,
-            position: 'top-end',
-            icon: type,
-            title: message,
-            showConfirmButton: false,
-            timer: 3500,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-              toast.addEventListener('mouseenter', Swal.stopTimer);
-              toast.addEventListener('mouseleave', Swal.resumeTimer);
-            }
-          });
-        }
-
-        // Load group information
-                function loadGroupInfo() {
-            maNhomDatPhong = getQueryParam('maNhomDatPhong');
-            if (!maNhomDatPhong) {
-                showToast('Không tìm thấy thông tin đoàn! Vui lòng chọn nhóm trước.', 'error');
-                speak('Không tìm thấy thông tin đoàn! Vui lòng chọn nhóm trước.');
-                setTimeout(() => {
-                    window.location.href = '/KhachSan';
-                }, 2000);
-                return;
-            }
-
-            // Làm mới currentRoomCustomers
-            currentRoomCustomers = {};
-
-            fetch(`http://localhost:5000/api/KhachSanAPI/groups`, {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include'
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        if (response.status === 404) {
-                            throw new Error('Không tìm thấy endpoint /groups. Vui lòng kiểm tra server backend.');
-                        }
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success && data.groups) {
-                        const group = data.groups.find(g => g.id == maNhomDatPhong);
-                        if (group) {
-                            document.getElementById('group-name').value = group.name || '';
-                            document.getElementById('group-representative').value = group.representative || '';
-                            document.getElementById('group-phone').value = group.phone || '';
-                            loadAvailableRooms();
-                            loadAssignedRooms();
-                        } else {
-                            throw new Error('Không tìm thấy đoàn!');
-                        }
-                    } else {
-                        throw new Error('Không thể tải thông tin đoàn!');
-                    }
-                })
-                .catch(error => {
-                    console.error('Lỗi khi tải thông tin đoàn:', error);
-                    showToast('Lỗi khi tải thông tin đoàn: ' + error.message, 'error');
-                    speak('Lỗi khi tải thông tin đoàn: ' + error.message);
-                    setTimeout(() => {
-                        window.location.href = '/KhachSan';
-                    }, 2000);
-                });
-        }
-
-        // Load available rooms for customer assignment
-                // Load available rooms for customer assignment
-        function loadAvailableRooms() {
-            fetch('http://localhost:5000/api/KhachSanAPI/GetRooms', {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include'
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(err => {
-                            throw new Error(err.message || `HTTP error! Status: ${response.status}`);
-                        });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    const roomSelect = document.getElementById('room-select');
-                    roomSelect.innerHTML = '<option value="">-- Chọn phòng --</option>';
-                    if (data.success && data.rooms) {
-                        // Chỉ hiển thị các phòng đã được liên kết với nhóm
-                        fetch(`http://localhost:5000/api/KhachSanAPI/groups`, {
-                            method: 'GET',
-                            headers: { 'Content-Type': 'application/json' },
-                            credentials: 'include'
-                        })
-                            .then(response => {
-                                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                                return response.json();
-                            })
-                            .then(groupData => {
-                                const group = groupData.groups.find(g => g.id == maNhomDatPhong);
-                                const assignedRoomIds = group.rooms || [];
-                                data.rooms.forEach(room => {
-                                    if (assignedRoomIds.includes(room.maPhong.toString()) && !room.dangSuDung) {
-                                        const option = document.createElement('option');
-                                        option.value = room.maPhong;
-                                        option.textContent = `${room.soPhong} (${room.trangThai})`;
-                                        roomSelect.appendChild(option);
-                                    }
-                                });
-                                if (roomSelect.options.length === 1) { // Chỉ có "-- Chọn phòng --"
-                                    showToast('Không có phòng nào khả dụng để phân bổ khách!', 'warning');
-                                    speak('Không có phòng nào khả dụng để phân bổ khách!');
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Lỗi khi tải thông tin nhóm:', error);
-                                showToast('Lỗi khi tải thông tin nhóm: ' + error.message, 'error');
-                                speak('Lỗi khi tải thông tin nhóm: ' + error.message);
-                            });
-                    } else {
-                        showToast('Không thể tải danh sách phòng!', 'error');
-                        speak('Không thể tải danh sách phòng!');
-                    }
-                })
-                .catch(error => {
-                    console.error('Lỗi khi tải danh sách phòng:', error);
-                    showToast('Lỗi khi tải danh sách phòng: ' + error.message, 'error');
-                    speak('Lỗi khi tải danh sách phòng: ' + error.message);
-                });
-        }
-
-        // Load rooms already assigned to the group
-                function loadAssignedRooms() {
-            fetch(`http://localhost:5000/api/KhachSanAPI/groups`, {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include'
-            })
-                .then(response => {
-                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                    return response.json();
-                })
-                .then(data => {
-                    const group = data.groups.find(g => g.id == maNhomDatPhong);
-                    const assignedRoomIds = group.rooms || [];
-
-                    fetch('http://localhost:5000/api/KhachSanAPI/GetRooms', {
-                        method: 'GET',
-                        headers: { 'Content-Type': 'application/json' },
-                        credentials: 'include'
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                return response.json().then(err => {
-                                    throw new Error(err.message || `HTTP error! Status: ${response.status}`);
-                                });
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            const roomSelection = document.getElementById('room-selection');
-                            roomSelection.innerHTML = '';
-                            if (data.success && data.rooms) {
-                                data.rooms.forEach(room => {
-                                    // Chỉ hiển thị phòng trống và không còn liên kết với nhóm đã thanh toán
-                                    if (!room.dangSuDung) {
-                                        const div = document.createElement('div');
-                                        div.className = 'room-checkbox';
-                                        const isChecked = assignedRoomIds.includes(room.maPhong.toString());
-                                        div.innerHTML = `
-                                            <input type="checkbox" id="room-${room.maPhong}" value="${room.maPhong}" ${isChecked ? 'checked' : ''}>
-                                            <label for="room-${room.maPhong}">${room.soPhong} (${room.trangThai})</label>
-                                        `;
-                                        roomSelection.appendChild(div);
-                                    }
-                                });
-                                if (roomSelection.children.length === 0) {
-                                    showToast('Không có phòng trống nào để chọn!', 'warning');
-                                    speak('Không có phòng trống nào để chọn!');
-                                }
-                            } else {
-                                showToast('Không thể tải danh sách phòng!', 'error');
-                                speak('Không thể tải danh sách phòng!');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Lỗi khi tải danh sách phòng:', error);
-                            showToast('Lỗi khi tải danh sách phòng: ' + error.message, 'error');
-                            speak('Lỗi khi tải danh sách phòng: ' + error.message);
-                        });
-                })
-                .catch(error => {
-                    console.error('Lỗi khi tải thông tin nhóm:', error);
-                    showToast('Lỗi khi tải thông tin nhóm: ' + error.message, 'error');
-                    speak('Lỗi khi tải thông tin nhóm: ' + error.message);
-                });
-        }
-
-        // Save rooms for group
-                function saveRoomsForGroup() {
-            const roomSelection = document.getElementById('room-selection');
-            const selectedRooms = Array.from(roomSelection.querySelectorAll('input[type="checkbox"]:checked'))
-                .map(checkbox => parseInt(checkbox.value));
-
-            if (selectedRooms.length === 0) {
-                showToast('Vui lòng chọn ít nhất một phòng!', 'error');
-                speak('Vui lòng chọn ít nhất một phòng!');
-                return;
-            }
-
-            const checkinDate = document.getElementById('checkin-date').value;
-            const checkoutDate = document.getElementById('checkout-date').value;
-
-            if (!checkinDate || !checkoutDate) {
-                showToast('Vui lòng nhập đầy đủ ngày nhận phòng và ngày trả phòng!', 'error');
-                speak('Vui lòng nhập đầy đủ ngày nhận phòng và ngày trả phòng!');
-                return;
-            }
-
-            const today = new Date().toISOString().split('T')[0];
-            if (checkinDate < today) {
-                showToast('Ngày nhận phòng phải từ hôm nay trở đi!', 'error');
-                speak('Ngày nhận phòng phải từ hôm nay trở đi!');
-                return;
-            }
-
-            if (checkoutDate <= checkinDate) {
-                showToast('Ngày trả phòng phải sau ngày nhận phòng!', 'error');
-                speak('Ngày trả phòng phải sau ngày nhận phòng!');
-                return;
-            }
-
-            Swal.fire({
-                title: 'Xác nhận lưu phòng',
-                text: 'Bạn có chắc muốn liên kết các phòng này với nhóm không?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Có, lưu',
-                cancelButtonText: 'Hủy'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch('http://localhost:5000/api/KhachSanAPI/add-group', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        credentials: 'include',
-                        body: JSON.stringify({
-                            TenNhom: document.getElementById('group-name').value.trim(),
-                            HoTenNguoiDaiDien: document.getElementById('group-representative').value.trim(),
-                            SoDienThoaiNguoiDaiDien: document.getElementById('group-phone').value.trim(),
-                            MaPhong: selectedRooms,
-                            NgayNhanPhong: checkinDate, // Gửi ngày nhận phòng
-                            NgayTraPhong: checkoutDate  // Gửi ngày trả phòng
-                        })
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                return response.json().then(err => {
-                                    throw new Error(err.message || `HTTP error! Status: ${response.status}`);
-                                });
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            if (data.success) {
-                                showToast('Liên kết phòng với nhóm thành công!', 'success');
-                                speak('Liên kết phòng với nhóm thành công!');
-                                loadAvailableRooms(); // Cập nhật danh sách phòng khả dụng
-                            } else {
-                                showToast(data.message || 'Lỗi khi liên kết phòng với nhóm!', 'error');
-                                speak(data.message || 'Lỗi khi liên kết phòng với nhóm!');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Lỗi khi liên kết phòng với nhóm:', error);
-                            showToast('Lỗi khi liên kết phòng với nhóm: ' + error.message, 'error');
-                            speak('Lỗi khi liên kết phòng với nhóm: ' + error.message);
-                        });
-                }
-            });
-        }
-
-        // Scan CCCD
-        function scanCCCD() {
-          const scanContainer = document.createElement('div');
-          scanContainer.id = 'scan-container';
-          scanContainer.style.cssText = 'display: block; margin-top: 10px; position: relative; text-align: center;';
-          scanContainer.innerHTML = `
-            <div style="position: relative; display: inline-block;">
-              <video id="video" width="300" height="200" autoplay style="border-radius: 4px; border: 1px solid #ccc;"></video>
-              <div style="position: absolute; top: 10%; left: 10%; width: 80%; height: 80%; border: 2px dashed #00ff00; opacity: 0.7; pointer-events: none;"></div>
-              <p style="margin: 5px 0; color: #333; font-size: 14px;">Đặt mã QR trên CCCD vào khung</p>
-            </div>
-            <canvas id="canvas" style="display: none;"></canvas>
-            <button id="stop-scan" style="margin-top: 5px; background: #d33; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Dừng quét</button>
-            <input type="file" id="cccd-image" accept="image/*" style="margin-top: 5px;" title="Tải ảnh CCCD nếu webcam không hoạt động">
-          `;
-          document.querySelector('.qr-section').appendChild(scanContainer);
-
-          const video = document.getElementById('video');
-          const canvasElement = document.getElementById('canvas');
-          const canvas = canvasElement.getContext('2d', { willReadFrequently: true });
-          const stopScanButton = document.getElementById('stop-scan');
-          const cccdImageInput = document.getElementById('cccd-image');
-          let stream = null;
-
-          if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-            showToast('Trình duyệt không hỗ trợ truy cập camera!', 'error');
-            speak('Trình duyệt không hỗ trợ truy cập camera!');
-            scanContainer.remove();
-            return;
-          }
-
-          navigator.mediaDevices.getUserMedia({ video: true })
-            .then(mediaStream => {
-              stream = mediaStream;
-              video.srcObject = stream;
-              video.play().catch(err => {
-                showToast('Không thể khởi động camera: ' + err.message, 'error');
-                speak('Không thể khởi động camera: ' + err.message);
-                stopStream();
-                scanContainer.remove();
-              });
-              requestAnimationFrame(tick);
-            })
-            .catch(err => {
-              let errorMessage = 'Không thể truy cập camera: ' + err.message;
-              if (err.name === 'NotAllowedError') {
-                errorMessage = 'Vui lòng cấp quyền sử dụng camera!';
-              } else if (err.name === 'NotFoundError') {
-                errorMessage = 'Không tìm thấy webcam! Hãy thử tải ảnh CCCD.';
-              } else if (err.name === 'NotReadableError') {
-                errorMessage = 'Webcam đang được sử dụng bởi ứng dụng khác!';
-              }
-              showToast(errorMessage, 'error');
-              speak(errorMessage);
-              scanContainer.remove();
-            });
-
-          function tick() {
-            if (video.readyState === video.HAVE_ENOUGH_DATA) {
-              canvasElement.height = video.videoHeight;
-              canvasElement.width = video.videoWidth;
-              canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
-              const imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
-              const code = jsQR(imageData.data, imageData.width, imageData.height, {
-                inversionAttempts: 'attemptBoth'
-              });
-
-              if (code) {
-                console.log('QR Data:', code.data);
-                const qrData = code.data.split('|');
-                if (qrData.length >= 6 && /^\d{12}$/.test(qrData[0])) {
-                  document.getElementById('cccd-number').textContent = qrData[0];
-                  document.getElementById('customer-name').textContent = qrData[2] && !/^\d+$/.test(qrData[2]) ? qrData[2] : '';
-                  document.getElementById('customer-address').textContent = qrData[5] && qrData[5].includes(' ') ? qrData[5] : '';
-                  document.getElementById('customer-nationality').textContent = 'Việt Nam';
-                  showToast('Quét CCCD thành công!', 'success');
-                  speak('Quét CCCD thành công!');
-                  stopStream();
-                  scanContainer.remove();
-                } else {
-                  showToast('Dữ liệu CCCD không hợp lệ!', 'error');
-                  speak('Dữ liệu CCCD không hợp lệ!');
-                  requestAnimationFrame(tick);
-                }
-              } else {
-                requestAnimationFrame(tick);
-              }
-            } else {
-              requestAnimationFrame(tick);
-            }
-          }
-
-          function stopStream() {
-            if (stream) {
-              stream.getTracks().forEach(track => track.stop());
-              stream = null;
-            }
-          }
-
-          stopScanButton.onclick = () => {
-            stopStream();
-            scanContainer.remove();
-            showToast('Đã dừng quét CCCD.', 'info');
-            speak('Đã dừng quét CCCD.');
-          };
-
-          cccdImageInput.onchange = function (e) {
-            const file = e.target.files[0];
-            if (!file) {
-              showToast('Chưa chọn ảnh CCCD!', 'error');
-              speak('Chưa chọn ảnh CCCD!');
-              return;
-            }
-
-            const img = new Image();
-            img.onload = function () {
-              const maxSize = 1024;
-              let width = img.width;
-              let height = img.height;
-              if (width > height) {
-                if (width > maxSize) {
-                  height *= maxSize / width;
-                  width = maxSize;
-                }
-              } else {
-                if (height > maxSize) {
-                  width *= maxSize / height;
-                  height = maxSize;
-                }
-              }
-              canvasElement.width = width;
-              canvasElement.height = height;
-              canvas.drawImage(img, 0, 0, width, height);
-
-              const imageData = canvas.getImageData(0, 0, width, height);
-              const code = jsQR(imageData.data, width, height, {
-                inversionAttempts: 'attemptBoth'
-              });
-
-              if (code) {
-                console.log('QR Data from Image:', code.data);
-                const qrData = code.data.split('|');
-                if (qrData.length >= 6 && /^\d{12}$/.test(qrData[0])) {
-                  document.getElementById('cccd-number').textContent = qrData[0];
-                  document.getElementById('customer-name').textContent = qrData[2] && !/^\d+$/.test(qrData[2]) ? qrData[2] : '';
-                  document.getElementById('customer-address').textContent = qrData[5] && qrData[5].includes(' ') ? qrData[5] : '';
-                  document.getElementById('customer-nationality').textContent = 'Việt Nam';
-                  showToast('Quét CCCD từ ảnh thành công!', 'success');
-                  speak('Quét CCCD từ ảnh thành công!');
-                  scanContainer.remove();
-                } else {
-                  showToast('Dữ liệu CCCD trong ảnh không hợp lệ!', 'error');
-                  speak('Dữ liệu CCCD trong ảnh không hợp lệ!');
-                }
-              } else {
-                showToast('Không tìm thấy mã QR trong ảnh!', 'error');
-                speak('Không tìm thấy mã QR trong ảnh!');
-              }
-              URL.revokeObjectURL(img.src);
-            };
-            img.onerror = function () {
-              showToast('Lỗi khi tải ảnh CCCD!', 'error');
-              speak('Lỗi khi tải ảnh CCCD!');
-            };
-            img.src = URL.createObjectURL(file);
-          };
-        }
-
-        // Add customer
-        document.getElementById('add-btn').addEventListener('click', () => {
-          const cccdNumber = document.getElementById('cccd-number').textContent;
-          const customerName = document.getElementById('customer-name').textContent;
-          const customerAddress = document.getElementById('customer-address').textContent;
-          const customerNationality = document.getElementById('customer-nationality').textContent;
-
-          if (cccdNumber === 'Chưa quét' || !customerName || !customerAddress || !customerNationality) {
-            showToast('Vui lòng quét CCCD hoặc nhập đầy đủ thông tin khách!', 'error');
-            speak('Vui lòng quét CCCD hoặc nhập đầy đủ thông tin khách!');
-            return;
-          }
-
-          const customerTable = document.getElementById('customer-table').querySelector('tbody');
-          const existingCustomer = Array.from(customerTable.rows).find(row => row.cells[3].textContent === cccdNumber);
-          if (existingCustomer) {
-            showToast('Khách này đã được thêm vào danh sách!', 'warning');
-            speak('Khách này đã được thêm vào danh sách!');
-            return;
-          }
-
-          const newRow = customerTable.insertRow();
-          newRow.innerHTML = `
-            <td><input type="checkbox" value="${customerTable.rows.length}"> ${customerTable.rows.length}</td>
-            <td>${customerName}</td>
-            <td>Nam</td>
-            <td>${cccdNumber}</td>
-          `;
-          showToast('Thêm khách thành công!', 'success');
-          speak(`Thêm khách ${customerName} thành công!`);
-          resetCustomerInfo();
-        });
-
-        // Skip button
-        document.getElementById('skip-btn').addEventListener('click', () => {
-          resetCustomerInfo();
-          showToast('Đã bỏ qua thông tin khách.', 'info');
-          speak('Đã bỏ qua thông tin khách.');
-        });
-
-        // Move customers to room
-        document.getElementById('move-right').addEventListener('click', () => {
-          const roomSelect = document.getElementById('room-select');
-          const maPhong = roomSelect.value;
-          if (!maPhong) {
-            showToast('Vui lòng chọn phòng trước khi chuyển khách!', 'error');
-            speak('Vui lòng chọn phòng trước khi chuyển khách!');
-            return;
-          }
-
-          const customerTable = document.getElementById('customer-table').querySelector('tbody');
-          const roomTable = document.getElementById('room-table').querySelector('tbody');
-          const selectedRows = customerTable.querySelectorAll('input[type="checkbox"]:checked');
-
-          if (selectedRows.length === 0) {
-            showToast('Vui lòng chọn ít nhất một khách để chuyển!', 'error');
-            speak('Vui lòng chọn ít nhất một khách để chuyển!');
-            return;
-          }
-
-          selectedRows.forEach((checkbox) => {
-            const row = checkbox.closest('tr');
-            const rowData = row.cells;
-            const cccdNumber = rowData[3].textContent;
-
-            if (!currentRoomCustomers[maPhong]) {
-              currentRoomCustomers[maPhong] = [];
-            }
-            if (currentRoomCustomers[maPhong].find(c => c.cccd === cccdNumber)) {
-              showToast(`Khách ${rowData[1].textContent} đã có trong phòng này!`, 'warning');
-              speak(`Khách ${rowData[1].textContent} đã có trong phòng này!`);
-              return;
-            }
-
-            currentRoomCustomers[maPhong].push({
-              name: rowData[1].textContent,
-              gender: rowData[2].textContent,
-              cccd: cccdNumber
-            });
-
-            const newRow = roomTable.insertRow();
-            newRow.innerHTML = `
-              <td><input type="checkbox" value="${roomTable.rows.length}"> ${roomTable.rows.length}</td>
-              <td>${rowData[1].textContent}</td>
-              <td>${rowData[2].textContent}</td>
-              <td>${rowData[3].textContent}</td>
-            `;
-            row.remove();
-          });
-
-          updateCustomerTableSTT();
-          updateRoomTableSTT();
-        });
-
-        // Move customers back to customer list
-        document.getElementById('move-left').addEventListener('click', () => {
-          const roomSelect = document.getElementById('room-select');
-          const maPhong = roomSelect.value;
-          if (!maPhong) {
-            showToast('Vui lòng chọn phòng trước khi chuyển khách!', 'error');
-            speak('Vui lòng chọn phòng trước khi chuyển khách!');
-            return;
-          }
-
-          const roomTable = document.getElementById('room-table').querySelector('tbody');
-          const customerTable = document.getElementById('customer-table').querySelector('tbody');
-          const selectedRows = roomTable.querySelectorAll('input[type="checkbox"]:checked');
-
-          if (selectedRows.length === 0) {
-            showToast('Vui lòng chọn ít nhất một khách để chuyển!', 'error');
-            speak('Vui lòng chọn ít nhất một khách để chuyển!');
-            return;
-          }
-
-          selectedRows.forEach((checkbox) => {
-            const row = checkbox.closest('tr');
-            const rowData = row.cells;
-            const cccdNumber = rowData[3].textContent;
-
-            if (currentRoomCustomers[maPhong]) {
-              currentRoomCustomers[maPhong] = currentRoomCustomers[maPhong].filter(c => c.cccd !== cccdNumber);
-            }
-
-            const newRow = customerTable.insertRow();
-            newRow.innerHTML = `
-              <td><input type="checkbox" value="${customerTable.rows.length}"> ${customerTable.rows.length}</td>
-              <td>${rowData[1].textContent}</td>
-              <td>${rowData[2].textContent}</td>
-              <td>${rowData[3].textContent}</td>
-            `;
-            row.remove();
-          });
-
-          updateCustomerTableSTT();
-          updateRoomTableSTT();
-        });
-
-        // Save all data (customers)
-        document.getElementById('save-btn').addEventListener('click', () => {
-          if (!maNhomDatPhong) {
-            showToast('Không tìm thấy thông tin đoàn!', 'error');
-            speak('Không tìm thấy thông tin đoàn!');
-            return;
-          }
-
-          Swal.fire({
-            title: 'Xác nhận lưu thông tin khách',
-            text: 'Bạn có chắc muốn lưu thông tin khách không?',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Có, lưu',
-            cancelButtonText: 'Hủy'
-          }).then((result) => {
-            if (result.isConfirmed) {
-              saveGroupData();
-            }
-          });
-        });
-
-                    function saveGroupData() {
-            const customerTable = document.getElementById('customer-table').querySelector('tbody');
-            const customers = Array.from(customerTable.rows).map(row => ({
-                soGiayTo: row.cells[3].textContent,
-                hoTen: row.cells[1].textContent,
-                gioiTinh: row.cells[2].textContent,
-                diaChi: 'N/A',
-                quocTich: 'Việt Nam'
-            }));
-
-            const roomAssignments = Object.entries(currentRoomCustomers).map(([maPhong, customers]) => ({
-                maPhong: parseInt(maPhong),
-                customers: customers.map(c => ({
-                    soGiayTo: c.cccd,
-                    hoTen: c.name,
-                    gioiTinh: c.gender,
-                    diaChi: 'N/A',
-                    quocTich: 'Việt Nam'
-                }))
-            }));
-
-            const customersWithoutRoom = customers.filter(customer =>
-                !roomAssignments.some(r => r.customers.some(c => c.soGiayTo === customer.soGiayTo))
-            );
-
-            if (customersWithoutRoom.length > 0) {
-                const customerNames = customersWithoutRoom.map(c => c.hoTen).join(', ');
-                showToast(`Vui lòng phân phòng cho các khách sau trước khi lưu: ${customerNames}`, 'error');
-                speak(`Vui lòng phân phòng cho các khách sau trước khi lưu: ${customerNames}`);
-                return;
-            }
-
-            const checkinDate = document.getElementById('checkin-date').value;
-            if (!checkinDate) {
-                showToast('Vui lòng nhập ngày nhận phòng trước khi lưu khách!', 'error');
-                speak('Vui lòng nhập ngày nhận phòng trước khi lưu khách!');
-                return;
-            }
-
-            Swal.fire({
-                title: 'Đang lưu...',
-                text: 'Vui lòng đợi trong giây lát.',
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            });
-
-            const customerPromises = customers.concat(...roomAssignments.flatMap(r => r.customers))
-                .filter((c, i, arr) => arr.findIndex(x => x.soGiayTo === c.soGiayTo) === i)
-                .map(customer => {
-                    const matchingRoom = roomAssignments.find(r => r.customers.some(c => c.soGiayTo === customer.soGiayTo));
-                    const maPhong = matchingRoom ? matchingRoom.maPhong : 0;
-
-                    return fetch('http://localhost:5000/api/KhachSanAPI/BookRoom', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        credentials: 'include',
-                        body: JSON.stringify({
-                            MaPhong: maPhong,
-                            LoaiGiayTo: 'CCCD',
-                            SoGiayTo: customer.soGiayTo,
-                            HoTen: customer.hoTen,
-                            DiaChi: customer.diaChi,
-                            QuocTich: customer.quocTich,
-                            LoaiDatPhong: 'Theo ngày',
-                            NgayNhanPhongDuKien: checkinDate // Gửi ngày nhận phòng dự kiến
-                        })
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                return response.json().then(err => {
-                                    throw new Error(err.message || `HTTP error! Status: ${response.status}`);
-                                });
-                            }
-                            return response.json();
-                        })
-                        .then(data => ({ success: data.success, maDatPhong: data.maDatPhong, customer, maPhong }));
-                });
-
-            Promise.all(customerPromises)
-                .then(results => {
-                    const failed = results.filter(r => !r.success);
-                    if (failed.length > 0) {
-                        Swal.close();
-                        showToast('Lỗi khi lưu một số khách!', 'error');
-                        speak('Lỗi khi lưu một số khách!');
-                        return;
-                    }
-
-                    const updatePromises = results.map(result => {
-                        return fetch('http://localhost:5000/api/KhachSanAPI/UpdateDatPhongGroup', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            credentials: 'include',
-                            body: JSON.stringify({
-                                MaDatPhong: result.maDatPhong,
-                                MaNhomDatPhong: maNhomDatPhong
-                            })
-                        })
-                            .then(response => {
-                                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                                return response.json();
-                            })
-                            .then(data => {
-                                if (!data.success) throw new Error(data.message || 'Lỗi khi cập nhật nhóm cho đặt phòng');
-                                return result;
-                            });
-                    });
-
-                    return Promise.all(updatePromises);
-                })
-                        .then(results => {
-            
-            showToast('Lưu thông tin khách thành công!', 'success');
-            speak('Lưu thông tin khách thành công!');
-            currentRoomCustomers = {};
-            // Làm mới phòng khi quay lại KhachSan.cshtml
-            window.location.href = '/khachsan.html';
-            setTimeout(() => {
-                if (window.opener && window.opener.refreshRooms) {
-                    window.opener.refreshRooms();
-                }
-            }, 500);
-        })
-                .catch(error => {
-                    Swal.close();
-                    console.error('Lỗi khi lưu dữ liệu:', error);
-                    showToast('Lỗi khi lưu dữ liệu: ' + error.message, 'error');
-                    speak('Lỗi khi lưu dữ liệu: ' + error.message);
-                });
-        }
-
-        // Reset customer info
-        function resetCustomerInfo() {
-          document.getElementById('cccd-number').textContent = 'Chưa quét';
-          document.getElementById('customer-name').textContent = 'Chưa quét';
-          document.getElementById('customer-address').textContent = 'Chưa quét';
-          document.getElementById('customer-nationality').textContent = 'Chưa quét';
-        }
-
-        // Update STT for customer table
-        function updateCustomerTableSTT() {
-          const customerTable = document.getElementById('customer-table').querySelector('tbody');
-          Array.from(customerTable.rows).forEach((row, index) => {
-            row.cells[0].innerHTML = `<input type="checkbox" value="${index + 1}"> ${index + 1}`;
-          });
-        }
-
-        // Update STT for room table
-        function updateRoomTableSTT() {
-          const roomTable = document.getElementById('room-table').querySelector('tbody');
-          Array.from(roomTable.rows).forEach((row, index) => {
-            row.cells[0].innerHTML = `<input type="checkbox" value="${index + 1}"> ${index + 1}`;
-          });
-        }
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-          loadGroupInfo();
-          document.getElementById('scan-btn').addEventListener('click', scanCCCD);
-        });
-
-                // Thêm sự kiện cho nút "Trở về trang chủ"
-        document.getElementById('back-btn').addEventListener('click', () => {
-            Swal.fire({
-                title: 'Xác nhận trở về',
-                text: 'Bạn có chắc muốn trở về trang chủ không? Dữ liệu chưa lưu sẽ bị mất.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Có, trở về',
-                cancelButtonText: 'Hủy'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = '/khachsan.html';
-                }
-            });
-        });
-    </script>
-    <script src="js/nhom.js"></script>
+    <div class="room-selection-section">
+      <h3>Chọn phòng cho nhóm</h3>
+      <div class="room-selection" id="room-selection">
+        <!-- Danh sách phòng sẽ được thêm bằng JavaScript -->
+      </div>
+      <div class="actions" style="margin-top: 15px; display: flex; justify-content: flex-end; gap: 15px;">
+        <button onclick="saveRoomsForGroup()" style="background-color: #28a745;">Lưu phòng</button>
+        <button id="back-btn" aria-label="Trở về trang chủ">Trở về trang chủ</button>
+      </div>
+    </div>
+
+    <div class="qr-section">
+      <div class="input-mode-toggle">
+        <button id="scan-btn" aria-label="Quét CCCD">Quét CCCD</button>
+        <button id="manual-input-btn" aria-label="Nhập thủ công">Nhập thủ công</button>
+      </div>
+      <div class="qr-box" id="qr-box">
+        <img id="qr-image" src="http://via.placeholder.com/100" alt="Mã QR khách">
+      </div>
+      <div class="manual-input" id="manual-input" style="display: none;">
+        <label for="manual-cccd-number">Số CCCD:</label>
+        <input type="text" id="manual-cccd-number" placeholder="Nhập số CCCD (12 chữ số)">
+        <label for="manual-customer-name">Họ tên:</label>
+        <input type="text" id="manual-customer-name" placeholder="Nhập họ tên">
+        <label for="manual-customer-address">Địa chỉ:</label>
+        <input type="text" id="manual-customer-address" placeholder="Nhập địa chỉ">
+        <label for="manual-customer-nationality">Quốc tịch:</label>
+        <input type="text" id="manual-customer-nationality" value="Việt Nam" placeholder="Nhập quốc tịch">
+        <label for="manual-customer-gender">Giới tính:</label>
+        <select id="manual-customer-gender">
+          <option value="Nam">Nam</option>
+          <option value="Nữ">Nữ</option>
+          <option value="Khác">Khác</option>
+        </select>
+      </div>
+      <div class="info-box" id="info-box">
+        <p><strong>CCCD:</strong> <span id="cccd-number">Chưa quét</span></p>
+        <p><strong>Họ tên:</strong> <span id="customer-name">Chưa quét</span></p>
+        <p><strong>Địa chỉ:</strong> <span id="customer-address">Chưa quét</span></p>
+        <p><strong>Quốc tịch:</strong> <span id="customer-nationality">Chưa quét</span></p>
+        <p><strong>Giới tính:</strong> <span id="customer-gender">Chưa quét</span></p>
+      </div>
+      <div class="button-group">
+        <button id="add-btn" aria-label="Thêm khách">Thêm</button>
+        <button id="skip-btn" aria-label="Bỏ qua">Bỏ qua</button>
+      </div>
+      <p class="alert-message" id="assign-room-alert" style="display: none;">Vui lòng chuyển khách sang phòng trước khi
+        lưu!</p>
+    </div>
+
+    <div class="tables-wrapper">
+      <div class="customer-table">
+        <h3>Danh sách khách theo đoàn</h3>
+        <table id="customer-table">
+          <thead>
+            <tr>
+              <th>STT</th>
+              <th>Họ tên</th>
+              <th>Giới tính</th>
+              <th>CCCD</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="action-buttons">
+        <button id="move-right" aria-label="Chuyển khách sang phòng">➡️</button>
+        <button id="move-left" aria-label="Chuyển khách về danh sách">⬅️</button>
+      </div>
+
+      <div class="room-table">
+        <div class="room-select">
+          <label for="room-select">Chọn phòng:</label>
+          <select id="room-select">
+            <option value="">-- Chọn phòng --</option>
+          </select>
+        </div>
+        <h3>Danh sách khách trong phòng</h3>
+        <table id="room-table">
+          <thead>
+            <tr>
+              <th>STT</th>
+              <th>Họ tên</th>
+              <th>Giới tính</th>
+              <th>CCCD</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="save-button">
+      <button id="save-btn" aria-label="Lưu thông tin">Lưu khách</button>
+    </div>
+  </div>
+
+  <script src="http://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="http://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+  <script src="js/nhom.js"></script>
 </body>
+
 </html>

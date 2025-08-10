@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="/css/index.css">
 </head>
+
 <body>
     <header>
         <nav class="navbar navbar-expand-lg navbar-light">
@@ -15,7 +17,9 @@
                 <a class="navbar-brand" href="index.html">
                     <i class="fas fa-hotel me-2"></i>Khách Sạn
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -26,7 +30,8 @@
                             </a>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="roomDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" href="#" id="roomDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-bed me-1"></i>Phòng
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="roomDropdown">
@@ -35,7 +40,9 @@
                                         <i class="fas fa-list"></i> Tất cả phòng
                                     </a>
                                 </li>
-                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
                                 <li class="dropdown-submenu">
                                     <a class="dropdown-item" href="#">
                                         <i class="fas fa-star"></i> Loại phòng <i class="fas fa-angle-right ms-2"></i>
@@ -86,7 +93,9 @@
                                         </li>
                                     </ul>
                                 </li>
-                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
                                 <li>
                                     <a class="dropdown-item" href="#">
                                         <i class="fas fa-percentage"></i> Khuyến mãi
@@ -95,7 +104,8 @@
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="serviceDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" href="#" id="serviceDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-concierge-bell me-1"></i>Dịch vụ
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="serviceDropdown">
@@ -116,7 +126,8 @@
                                 </li>
                                 <li class="dropdown-submenu">
                                     <a class="dropdown-item" href="#">
-                                        <i class="fas fa-dumbbell"></i> Thể thao & Giải trí <i class="fas fa-angle-right ms-2"></i>
+                                        <i class="fas fa-dumbbell"></i> Thể thao & Giải trí <i
+                                            class="fas fa-angle-right ms-2"></i>
                                     </a>
                                     <ul class="dropdown-menu">
                                         <li>
@@ -144,7 +155,8 @@
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="promotionDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" href="#" id="promotionDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-tags me-1"></i>Khuyến mãi
                                 <span class="badge badge-custom ms-1">Hot</span>
                             </a>
@@ -176,7 +188,7 @@
                                 <i class=""></i>Đặt Phòng Ngay
                             </a>
                         </li>
-                        
+
                         <li class="nav-item">
                             <a class="nav-link" href="#">
                                 <i class="fas fa-phone me-1"></i>Liên hệ
@@ -210,7 +222,8 @@
                     <div class="service-card">
                         <i class="fas fa-bed"></i>
                         <h3>Phòng Ngủ Tiện Nghi</h3>
-                        <p>Hãy tận hưởng những phòng ngủ được thiết kế để thư giãn với đầy đủ tiện nghi hiện đại mà bạn cần.</p>
+                        <p>Hãy tận hưởng những phòng ngủ được thiết kế để thư giãn với đầy đủ tiện nghi hiện đại mà bạn
+                            cần.</p>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -224,7 +237,8 @@
                     <div class="service-card">
                         <i class="fas fa-users"></i>
                         <h3>Thân Thiện Với Gia Đình</h3>
-                        <p>Chúng tôi cung cấp các lựa chọn tuyệt vời cho các gia đình tìm kiếm một kỳ nghỉ vui vẻ và an toàn.</p>
+                        <p>Chúng tôi cung cấp các lựa chọn tuyệt vời cho các gia đình tìm kiếm một kỳ nghỉ vui vẻ và an
+                            toàn.</p>
                     </div>
                 </div>
             </div>
@@ -236,46 +250,46 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-    // Lấy vai trò từ localStorage
-    const role = localStorage.getItem('vaitro');
-    const exploreBtn = document.getElementById('explore-service-btn');
+            // Lấy vai trò từ localStorage
+            const role = localStorage.getItem('vaitro');
+            const exploreBtn = document.getElementById('explore-service-btn');
 
-    // Kiểm tra vai trò và điều chỉnh hiển thị nút
-    if (exploreBtn) {
-        if (role === "Khách hàng") {
-            console.log('Ẩn nút "Khám Phá Dịch Vụ" vì vai trò là Khách hàng');
-            exploreBtn.style.display = 'none'; // Ẩn nút
-        } else if (role === "Quản trị" || role === "Nhân viên") {
-            console.log('Hiển thị nút "Khám Phá Dịch Vụ" vì vai trò là Quản trị hoặc Nhân viên');
-            exploreBtn.style.display = 'inline-block'; // Hiển thị nút (giá trị mặc định của <a>)
-        } else {
-            console.log('Không có vai trò hợp lệ, ẩn nút và chuyển hướng đến trang đăng nhập');
-            exploreBtn.style.display = 'none'; // Ẩn nút
-        }
-    } else {
-        console.error('Không tìm thấy nút "explore-service-btn" trong DOM');
-    }
-});
+            // Kiểm tra vai trò và điều chỉnh hiển thị nút
+            if (exploreBtn) {
+                if (role === "Khách hàng") {
+                    console.log('Ẩn nút "Khám Phá Dịch Vụ" vì vai trò là Khách hàng');
+                    exploreBtn.style.display = 'none'; // Ẩn nút
+                } else if (role === "Quản trị" || role === "Nhân viên") {
+                    console.log('Hiển thị nút "Khám Phá Dịch Vụ" vì vai trò là Quản trị hoặc Nhân viên');
+                    exploreBtn.style.display = 'inline-block'; // Hiển thị nút (giá trị mặc định của <a>)
+                } else {
+                    console.log('Không có vai trò hợp lệ, ẩn nút và chuyển hướng đến trang đăng nhập');
+                    exploreBtn.style.display = 'none'; // Ẩn nút
+                }
+            } else {
+                console.error('Không tìm thấy nút "explore-service-btn" trong DOM');
+            }
+        });
         $(document).ready(function () {
-    $('.dropdown-submenu > a').on('click', function (e) {
-        if ($(window).width() < 992) {
-            e.preventDefault();
-            e.stopPropagation();
-            $(this).next('.dropdown-menu').toggle();
-        }
-    });
+            $('.dropdown-submenu > a').on('click', function (e) {
+                if ($(window).width() < 992) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    $(this).next('.dropdown-menu').toggle();
+                }
+            });
 
-    $('.navbar-collapse').on('hide.bs.collapse', function () {
-        $('.dropdown-submenu .dropdown-menu').hide();
-    });
+            $('.navbar-collapse').on('hide.bs.collapse', function () {
+                $('.dropdown-submenu .dropdown-menu').hide();
+            });
 
-    // Kiểm tra trạng thái đăng nhập
-    const token = localStorage.getItem('jwtToken');
-    const tenDangNhap = localStorage.getItem('tenDangNhap');
-    const userMenu = document.getElementById('user-menu');
+            // Kiểm tra trạng thái đăng nhập
+            const token = localStorage.getItem('jwtToken');
+            const tenDangNhap = localStorage.getItem('tenDangNhap');
+            const userMenu = document.getElementById('user-menu');
 
-    if (token && tenDangNhap) {
-        userMenu.innerHTML += `
+            if (token && tenDangNhap) {
+                userMenu.innerHTML += `
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fas fa-user me-1"></i>Xin chào, ${tenDangNhap}
@@ -294,8 +308,8 @@
                 </ul>
             </li>
         `;
-    } else {
-        userMenu.innerHTML += `
+            } else {
+                userMenu.innerHTML += `
             <li class="nav-item">
                 <a class="nav-link" href="/login.html">
                     <i class="fas fa-sign-in-alt me-1"></i>Đăng nhập
@@ -307,80 +321,81 @@
                 </a>
             </li>
         `;
-    }
-});
-
-function logout() {
-    const token = localStorage.getItem('jwtToken');
-    if (!token) {
-        localStorage.removeItem('jwtToken');
-        localStorage.removeItem('tenDangNhap');
-        localStorage.removeItem('hoTen');
-        localStorage.removeItem('maNhanVien');
-        localStorage.removeItem('vaitro');
-        Swal.fire({
-            icon: 'success',
-            title: 'Đăng xuất thành công',
-            showConfirmButton: false,
-            timer: 1500
-        }).then(() => {
-            window.location.href = 'index.html';
+            }
         });
-        return;
-    }
 
-    fetch('http://localhost:5000/api/Auth/logout', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+        function logout() {
+            const token = localStorage.getItem('jwtToken');
+            if (!token) {
+                localStorage.removeItem('jwtToken');
+                localStorage.removeItem('tenDangNhap');
+                localStorage.removeItem('hoTen');
+                localStorage.removeItem('maNhanVien');
+                localStorage.removeItem('vaitro');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Đăng xuất thành công',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    window.location.href = 'index.html';
+                });
+                return;
+            }
+
+            fetch('http://localhost:5000/api/Auth/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(async response => {
+                    const responseBody = await response.text();
+                    console.log('Logout response:', response.status, responseBody);
+                    localStorage.removeItem('jwtToken');
+                    localStorage.removeItem('tenDangNhap');
+                    localStorage.removeItem('hoTen');
+                    localStorage.removeItem('maNhanVien');
+                    localStorage.removeItem('vaitro');
+                    if (response.ok) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Đăng xuất thành công',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            window.location.href = 'index.html';
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Cảnh báo',
+                            text: `Đã đăng xuất cục bộ. Server trả về: ${response.status} ${responseBody}`
+                        }).then(() => {
+                            window.location.href = 'index.html';
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error during logout:', error);
+                    localStorage.removeItem('jwtToken');
+                    localStorage.removeItem('tenDangNhap');
+                    localStorage.removeItem('hoTen');
+                    localStorage.removeItem('maNhanVien');
+                    localStorage.removeItem('vaitro');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Đăng xuất thành công',
+                        text: 'Đã đăng xuất cục bộ do lỗi mạng.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.href = 'index.html';
+                    });
+                });
         }
-    })
-    .then(async response => {
-        const responseBody = await response.text();
-        console.log('Logout response:', response.status, responseBody);
-        localStorage.removeItem('jwtToken');
-        localStorage.removeItem('tenDangNhap');
-        localStorage.removeItem('hoTen');
-        localStorage.removeItem('maNhanVien');
-        localStorage.removeItem('vaitro');
-        if (response.ok) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Đăng xuất thành công',
-                showConfirmButton: false,
-                timer: 1500
-            }).then(() => {
-                window.location.href = 'index.html';
-            });
-        } else {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Cảnh báo',
-                text: `Đã đăng xuất cục bộ. Server trả về: ${response.status} ${responseBody}`
-            }).then(() => {
-                window.location.href = 'index.html';
-            });
-        }
-    })
-    .catch(error => {
-        console.error('Error during logout:', error);
-        localStorage.removeItem('jwtToken');
-        localStorage.removeItem('tenDangNhap');
-        localStorage.removeItem('hoTen');
-        localStorage.removeItem('maNhanVien');
-        localStorage.removeItem('vaitro');
-        Swal.fire({
-            icon: 'success',
-            title: 'Đăng xuất thành công',
-            text: 'Đã đăng xuất cục bộ do lỗi mạng.',
-            showConfirmButton: false,
-            timer: 1500
-        }).then(() => {
-            window.location.href = 'index.html';
-        });
-    });
-}
     </script>
 </body>
+
 </html>

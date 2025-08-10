@@ -2,7 +2,7 @@
 const API_CONFIG = {
     // Thay đổi URL này theo backend của bạn
     BASE_URL: 'https://localhost:5001', // Hoặc http://localhost:5000
-    
+
     // Các endpoint API
     ENDPOINTS: {
         REVENUE_REPORT: '/api/HotelManager/Reports/Revenue',

@@ -142,6 +142,7 @@ body {
 .header .right .notification .dropdown.show {
     display: none;
 }
+
 .header .right .notification .dropdown .notification-item {
     padding: 10px;
     border-bottom: 1px solid #ddd;
@@ -1009,16 +1010,20 @@ body.dark-mode .confirm-modal {
 }
 
 :root {
-    --border-radius: 8px; /* Định nghĩa giá trị mặc định cho biến */
-    --shadow-color: rgba(0, 0, 0, 0.2); /* Định nghĩa giá trị mặc định cho biến */
+    --border-radius: 8px;
+    /* Định nghĩa giá trị mặc định cho biến */
+    --shadow-color: rgba(0, 0, 0, 0.2);
+    /* Định nghĩa giá trị mặc định cho biến */
 }
 
 .toast {
     display: flex;
     align-items: center;
     padding: 15px 20px;
-    border-radius: var(--border-radius, 8px); /* Giá trị dự phòng */
-    box-shadow: 0 4px 12px var(--shadow-color, rgba(0, 0, 0, 0.2)); /* Giá trị dự phòng */
+    border-radius: var(--border-radius, 8px);
+    /* Giá trị dự phòng */
+    box-shadow: 0 4px 12px var(--shadow-color, rgba(0, 0, 0, 0.2));
+    /* Giá trị dự phòng */
     color: #ffffff;
     font-size: 14px;
     min-width: 300px;
@@ -1027,15 +1032,18 @@ body.dark-mode .confirm-modal {
     transform: translateX(0);
     animation: slideIn 0.5s ease forwards;
     pointer-events: auto;
-    will-change: transform, opacity; /* Giữ lại nếu cần tối ưu animation */
+    will-change: transform, opacity;
+    /* Giữ lại nếu cần tối ưu animation */
 }
 
 /* Định nghĩa keyframes cho animation slideIn */
 @keyframes slideIn {
     from {
-        transform: translateX(100%); /* Trượt từ bên phải */
+        transform: translateX(100%);
+        /* Trượt từ bên phải */
         opacity: 0;
     }
+
     to {
         transform: translateX(0);
         opacity: 1;
@@ -1127,6 +1135,7 @@ body.dark-mode .confirm-modal {
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -1138,6 +1147,7 @@ body.dark-mode .confirm-modal {
         opacity: 0;
         transform: translateX(100%);
     }
+
     to {
         opacity: 1;
         transform: translateX(0);
@@ -1149,6 +1159,7 @@ body.dark-mode .confirm-modal {
         opacity: 1;
         transform: translateX(0);
     }
+
     to {
         opacity: 0;
         transform: translateX(100%);
@@ -1236,6 +1247,7 @@ body.dark-mode .confirm-modal {
         font-size: 14px;
     }
 }
+
 /* Modal chung */
 .group-modal,
 .merge-bill-modal {
@@ -1258,8 +1270,15 @@ body.dark-mode .confirm-modal {
 
 /* Hiệu ứng fade-in */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translate(-50%, -60%); }
-    to { opacity: 1; transform: translate(-50%, -50%); }
+    from {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
 }
 
 /* Nút đóng */
@@ -1372,6 +1391,7 @@ body.dark-mode .confirm-modal {
 
 /* Responsive */
 @media (max-width: 480px) {
+
     .group-modal,
     .merge-bill-modal {
         width: 95%;

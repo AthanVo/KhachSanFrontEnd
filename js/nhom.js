@@ -131,7 +131,7 @@ function saveGroupData() {
             }
 
             const updatePromises = results.map(result => {
-                return fetch('http://localhost:5001/api/KhachSanAPI/UpdateDatPhongGroup', {
+                return fetch('https://localhost:5001/api/KhachSanAPI/UpdateDatPhongGroup', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -229,11 +229,11 @@ function loadGroups() {
             if (data.success) {
                 // Debug: In ra dữ liệu thô từ API
                 console.log('Raw groups data from API:', data.groups);
-                
+
                 // Kiểm tra số lượng phòng occupied trong DOM
                 const occupiedRooms = document.querySelectorAll('.room.occupied');
                 console.log('Occupied rooms in DOM:', occupiedRooms.length);
-                
+
                 // Lọc nhóm với logic cải tiến
                 groupsData = data.groups
                     .filter(group => {
@@ -242,7 +242,7 @@ function loadGroups() {
                             console.log(`Group ${group.id} (${group.name}): Không có phòng`);
                             return false;
                         }
-                        
+
                         // Kiểm tra xem có phòng nào của nhóm đang occupied
                         const hasOccupiedRoom = group.rooms.some(roomId => {
                             const room = document.querySelector(`.room[data-room-id="${roomId}"]`);
@@ -250,12 +250,12 @@ function loadGroups() {
                             console.log(`  - Room ${roomId}: ${room ? 'Tồn tại' : 'Không tồn tại'}, Occupied: ${isOccupied}`);
                             return isOccupied;
                         });
-                        
+
                         // Kiểm tra nhóm có datPhongs (đã có đặt phòng)
                         const hasDatPhongs = group.datPhongs && group.datPhongs.length > 0;
-                        
+
                         console.log(`Group ${group.id} (${group.name}): hasOccupiedRoom=${hasOccupiedRoom}, hasDatPhongs=${hasDatPhongs}`);
-                        
+
                         // Trả về true nếu có phòng occupied HOẶC có datPhongs (cho phép gộp hóa đơn cho nhóm đã checkout)
                         return hasOccupiedRoom || hasDatPhongs;
                     })
@@ -270,10 +270,10 @@ function loadGroups() {
                         datPhongs: group.datPhongs || []
                     }))
                     .sort((a, b) => a.id - b.id);
-                
+
                 console.log('Filtered groups data:', groupsData);
                 console.log('Total groups available for merge:', groupsData.length);
-                
+
                 updateGroupSelect();
             } else {
                 console.error('API response not successful:', data);
@@ -423,8 +423,8 @@ function createGroup(groupName, representative, phone) {
                 })
                 .catch(error => {
                     console.error('Lỗi khi tạo đoàn:', error);
-                    const errorMessage = error.message.includes('HTTP error') 
-                        ? error.message 
+                    const errorMessage = error.message.includes('HTTP error')
+                        ? error.message
                         : `Lỗi khi tạo đoàn: ${error.message || 'Không xác định'}`;
                     showToast(errorMessage, 'error');
                 });
@@ -532,11 +532,11 @@ function updateMergeBillDetails() {
 
                         // Tính số ngày thuê cho từng phòng
                         let days = globalRentalDays !== 'N/A' ? globalRentalDays : 1;
-                        
+
                         // Nếu có thông tin checkin/checkout riêng cho phòng thì ưu tiên
                         const roomCheckin = room.getAttribute('data-checkin');
                         const roomCheckout = room.getAttribute('data-checkout');
-                        
+
                         if (roomCheckin && roomCheckout) {
                             try {
                                 const checkInDate = new Date(roomCheckin);
@@ -822,4 +822,985 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
     loadGroups();
+});
+
+let maNhomDatPhong = null;
+let currentRoomCustomers = {};
+
+// Hàm phát giọng nói
+function speak(message) {
+    if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(message);
+        utterance.lang = 'vi-VN';
+        utterance.rate = 1;
+        utterance.pitch = 1;
+        utterance.volume = 1;
+
+        window.speechSynthesis.speak(utterance);
+
+        utterance.onerror = (event) => {
+            console.error('Lỗi phát giọng nói:', event.error);
+            if (event.error === 'not-allowed' || event.error === 'language-not-supported') {
+                const fallbackUtterance = new SpeechSynthesisUtterance(message);
+                fallbackUtterance.lang = 'en-US';
+                window.speechSynthesis.speak(fallbackUtterance);
+            }
+        };
+    } else {
+        console.warn('Trình duyệt không hỗ trợ Web Speech API!');
+        showToast('Trình duyệt không hỗ trợ phát giọng nói!', 'warning');
+    }
+}
+
+// Get query parameter
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
+
+// Show toast notification
+function showToast(message, type = 'success') {
+    Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: type,
+        title: message,
+        showConfirmButton: false,
+        timer: 3500,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer);
+            toast.addEventListener('mouseleave', Swal.resumeTimer);
+        }
+    });
+}
+
+// Kiểm tra token JWT
+function checkToken() {
+    const token = localStorage.getItem('jwtToken');
+    if (!token) {
+        showToast('Phiên đăng nhập hết hạn! Vui lòng đăng nhập lại.', 'error');
+        speak('Phiên đăng nhập hết hạn! Vui lòng đăng nhập lại.');
+        setTimeout(() => window.location.href = 'login.html', 2000);
+        return false;
+    }
+    return token;
+}
+
+// Load group information
+function loadGroupInfo() {
+    maNhomDatPhong = getQueryParam('maNhomDatPhong');
+    if (!maNhomDatPhong) {
+        showToast('Không tìm thấy thông tin đoàn! Vui lòng chọn nhóm trước.', 'error');
+        speak('Không tìm thấy thông tin đoàn! Vui lòng chọn nhóm trước.');
+        setTimeout(() => {
+            window.location.href = '/KhachSan';
+        }, 2000);
+        return;
+    }
+
+    currentRoomCustomers = {};
+
+    const token = checkToken();
+    if (!token) return;
+
+    fetch(`http://localhost:5000/api/KhachSanAPI/groups`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        credentials: 'include'
+    })
+        .then(response => {
+            if (!response.ok) {
+                if (response.status === 401) {
+                    throw new Error('Phiên đăng nhập hết hạn!');
+                } else if (response.status === 404) {
+                    throw new Error('Không tìm thấy endpoint /groups.');
+                }
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success && data.groups) {
+                const group = data.groups.find(g => g.id == maNhomDatPhong);
+                if (group) {
+                    document.getElementById('group-name').value = group.name || '';
+                    document.getElementById('group-representative').value = group.representative || '';
+                    document.getElementById('group-phone').value = group.phone || '';
+                    loadAvailableRooms();
+                    loadAssignedRooms();
+                } else {
+                    throw new Error('Không tìm thấy đoàn!');
+                }
+            } else {
+                throw new Error('Không thể tải thông tin đoàn!');
+            }
+        })
+        .catch(error => {
+            console.error('Lỗi khi tải thông tin đoàn:', error);
+            showToast('Lỗi khi tải thông tin đoàn: ' + error.message, 'error');
+            speak('Lỗi khi tải thông tin đoàn: ' + error.message);
+            setTimeout(() => {
+                window.location.href = '/KhachSan';
+            }, 2000);
+        });
+}
+
+// Load available rooms for customer assignment
+function loadAvailableRooms() {
+    const token = checkToken();
+    if (!token) return;
+
+    fetch('http://localhost:5000/api/KhachSanAPI/GetRooms', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        credentials: 'include'
+    })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => {
+                    throw new Error(err.message || `HTTP error! Status: ${response.status}`);
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            const roomSelect = document.getElementById('room-select');
+            roomSelect.innerHTML = '<option value="">-- Chọn phòng --</option>';
+            if (data.success && data.rooms) {
+                fetch(`http://localhost:5000/api/KhachSanAPI/groups`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    credentials: 'include'
+                })
+                    .then(response => {
+                        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                        return response.json();
+                    })
+                    .then(groupData => {
+                        const group = groupData.groups.find(g => g.id == maNhomDatPhong);
+                        const assignedRoomIds = group.rooms || [];
+                        data.rooms.forEach(room => {
+                            if (assignedRoomIds.includes(room.maPhong.toString()) && !room.dangSuDung) {
+                                const option = document.createElement('option');
+                                option.value = room.maPhong;
+                                option.textContent = `${room.soPhong} (${room.trangThai})`;
+                                roomSelect.appendChild(option);
+                            }
+                        });
+                        if (roomSelect.options.length === 1) {
+                            showToast('Không có phòng nào khả dụng để phân bổ khách!', 'warning');
+                            speak('Không có phòng nào khả dụng để phân bổ khách!');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Lỗi khi tải thông tin nhóm:', error);
+                        showToast('Lỗi khi tải thông tin nhóm: ' + error.message, 'error');
+                        speak('Lỗi khi tải thông tin nhóm: ' + error.message);
+                    });
+            } else {
+                showToast('Không thể tải danh sách phòng!', 'error');
+                speak('Không thể tải danh sách phòng!');
+            }
+        })
+        .catch(error => {
+            console.error('Lỗi khi tải danh sách phòng:', error);
+            showToast('Lỗi khi tải danh sách phòng: ' + error.message, 'error');
+            speak('Lỗi khi tải danh sách phòng: ' + error.message);
+        });
+}
+
+// Load rooms already assigned to the group
+function loadAssignedRooms() {
+    const token = checkToken();
+    if (!token) return;
+
+    fetch(`http://localhost:5000/api/KhachSanAPI/groups`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        credentials: 'include'
+    })
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+            return response.json();
+        })
+        .then(data => {
+            const group = data.groups.find(g => g.id == maNhomDatPhong);
+            const assignedRoomIds = group.rooms || [];
+
+            fetch('http://localhost:5000/api/KhachSanAPI/GetRooms', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                credentials: 'include'
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(err.message || `HTTP error! Status: ${response.status}`);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const roomSelection = document.getElementById('room-selection');
+                    roomSelection.innerHTML = '';
+                    if (data.success && data.rooms) {
+                        data.rooms.forEach(room => {
+                            if (!room.dangSuDung) {
+                                const div = document.createElement('div');
+                                div.className = 'room-checkbox';
+                                const isChecked = assignedRoomIds.includes(room.maPhong.toString());
+                                div.innerHTML = `
+                                            <input type="checkbox" id="room-${room.maPhong}" value="${room.maPhong}" ${isChecked ? 'checked' : ''}>
+                                            <label for="room-${room.maPhong}">${room.soPhong} (${room.trangThai})</label>
+                                        `;
+                                roomSelection.appendChild(div);
+                            }
+                        });
+                        if (roomSelection.children.length === 0) {
+                            showToast('Không có phòng trống nào để chọn!', 'warning');
+                            speak('Không có phòng trống nào để chọn!');
+                        }
+                    } else {
+                        showToast('Không thể tải danh sách phòng!', 'error');
+                        speak('Không thể tải danh sách phòng!');
+                    }
+                })
+                .catch(error => {
+                    console.error('Lỗi khi tải danh sách phòng:', error);
+                    showToast('Lỗi khi tải danh sách phòng: ' + error.message, 'error');
+                    speak('Lỗi khi tải danh sách phòng: ' + error.message);
+                });
+        })
+        .catch(error => {
+            console.error('Lỗi khi tải thông tin nhóm:', error);
+            showToast('Lỗi khi tải thông tin nhóm: ' + error.message, 'error');
+            speak('Lỗi khi tải thông tin nhóm: ' + error.message);
+        });
+}
+
+// Save rooms for group
+function saveRoomsForGroup() {
+    const token = checkToken();
+    if (!token) return;
+
+    const roomSelection = document.getElementById('room-selection');
+    const selectedRooms = Array.from(roomSelection.querySelectorAll('input[type="checkbox"]:checked'))
+        .map(checkbox => parseInt(checkbox.value));
+
+    if (selectedRooms.length === 0) {
+        showToast('Vui lòng chọn ít nhất một phòng!', 'error');
+        speak('Vui lòng chọn ít nhất một phòng!');
+        return;
+    }
+
+    const checkinDate = document.getElementById('checkin-date').value;
+    const checkoutDate = document.getElementById('checkout-date').value;
+
+    if (!checkinDate || !checkoutDate) {
+        showToast('Vui lòng nhập đầy đủ ngày nhận phòng và ngày trả phòng!', 'error');
+        speak('Vui lòng nhập đầy đủ ngày nhận phòng và ngày trả phòng!');
+        return;
+    }
+
+    const today = new Date().toISOString().split('T')[0];
+    if (checkinDate < today) {
+        showToast('Ngày nhận phòng phải từ hôm nay trở đi!', 'error');
+        speak('Ngày nhận phòng phải từ hôm nay trở đi!');
+        return;
+    }
+
+    if (checkoutDate <= checkinDate) {
+        showToast('Ngày trả phòng phải sau ngày nhận phòng!', 'error');
+        speak('Ngày trả phòng phải sau ngày nhận phòng!');
+        return;
+    }
+
+    Swal.fire({
+        title: 'Xác nhận lưu phòng',
+        text: 'Bạn có chắc muốn liên kết các phòng này với nhóm không?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Có, lưu',
+        cancelButtonText: 'Hủy'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch('http://localhost:5000/api/KhachSanAPI/add-group', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    TenNhom: document.getElementById('group-name').value.trim(),
+                    HoTenNguoiDaiDien: document.getElementById('group-representative').value.trim(),
+                    SoDienThoaiNguoiDaiDien: document.getElementById('group-phone').value.trim(),
+                    MaPhong: selectedRooms,
+                    NgayNhanPhong: checkinDate,
+                    NgayTraPhong: checkoutDate
+                })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(err.message || `HTTP error! Status: ${response.status}`);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        showToast('Liên kết phòng với nhóm thành công!', 'success');
+                        speak('Liên kết phòng với nhóm thành công!');
+                        loadAvailableRooms();
+                    } else {
+                        showToast(data.message || 'Lỗi khi liên kết phòng với nhóm!', 'error');
+                        speak(data.message || 'Lỗi khi liên kết phòng với nhóm!');
+                    }
+                })
+                .catch(error => {
+                    console.error('Lỗi khi liên kết phòng với nhóm:', error);
+                    showToast('Lỗi khi liên kết phòng với nhóm: ' + error.message, 'error');
+                    speak('Lỗi khi liên kết phòng với nhóm: ' + error.message);
+                });
+        }
+    });
+}
+
+// Scan CCCD
+function scanCCCD() {
+    toggleScanMode();
+    const scanContainer = document.createElement('div');
+    scanContainer.id = 'scan-container';
+    scanContainer.style.cssText = 'display: block; margin-top: 10px; position: relative; text-align: center;';
+    scanContainer.innerHTML = `
+                <div style="position: relative; display: inline-block;">
+                    <video id="video" width="300" height="200" autoplay style="border-radius: 4px; border: 1px solid #ccc;"></video>
+                    <div style="position: absolute; top: 10%; left: 10%; width: 80%; height: 80%; border: 2px dashed #00ff00; opacity: 0.7; pointer-events: none;"></div>
+                    <p style="margin: 5px 0; color: #333; font-size: 14px;">Đặt mã QR trên CCCD vào khung</p>
+                </div>
+                <canvas id="canvas" style="display: none;"></canvas>
+                <button id="stop-scan" style="margin-top: 5px; background: #d33; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Dừng quét</button>
+                <input type="file" id="cccd-image" accept="image/*" style="margin-top: 5px;" title="Tải ảnh CCCD nếu webcam không hoạt động">
+            `;
+    document.querySelector('.qr-section').appendChild(scanContainer);
+
+    const video = document.getElementById('video');
+    const canvasElement = document.getElementById('canvas');
+    const canvas = canvasElement.getContext('2d', { willReadFrequently: true });
+    const stopScanButton = document.getElementById('stop-scan');
+    const cccdImageInput = document.getElementById('cccd-image');
+    let stream = null;
+
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        showToast('Trình duyệt không hỗ trợ truy cập camera!', 'error');
+        speak('Trình duyệt không hỗ trợ truy cập camera!');
+        scanContainer.remove();
+        return;
+    }
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(mediaStream => {
+            stream = mediaStream;
+            video.srcObject = stream;
+            video.play().catch(err => {
+                showToast('Không thể khởi động camera: ' + err.message, 'error');
+                speak('Không thể khởi động camera: ' + err.message);
+                stopStream();
+                scanContainer.remove();
+            });
+            requestAnimationFrame(tick);
+        })
+        .catch(err => {
+            let errorMessage = 'Không thể truy cập camera: ' + err.message;
+            if (err.name === 'NotAllowedError') {
+                errorMessage = 'Vui lòng cấp quyền sử dụng camera!';
+            } else if (err.name === 'NotFoundError') {
+                errorMessage = 'Không tìm thấy webcam! Hãy thử tải ảnh CCCD hoặc nhập thủ công.';
+            } else if (err.name === 'NotReadableError') {
+                errorMessage = 'Webcam đang được sử dụng bởi ứng dụng khác!';
+            }
+            showToast(errorMessage, 'error');
+            speak(errorMessage);
+            scanContainer.remove();
+        });
+
+    function tick() {
+        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+            canvasElement.height = video.videoHeight;
+            canvasElement.width = video.videoWidth;
+            canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
+            const imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
+            const code = jsQR(imageData.data, imageData.width, imageData.height, {
+                inversionAttempts: 'attemptBoth'
+            });
+
+            if (code) {
+                console.log('QR Data:', code.data);
+                const qrData = code.data.split('|');
+                if (qrData.length >= 6 && /^\d{12}$/.test(qrData[0])) {
+                    document.getElementById('cccd-number').textContent = qrData[0];
+                    document.getElementById('customer-name').textContent = qrData[2] && !/^\d+$/.test(qrData[2]) ? qrData[2] : '';
+                    document.getElementById('customer-address').textContent = qrData[5] && qrData[5].includes(' ') ? qrData[5] : '';
+                    document.getElementById('customer-nationality').textContent = 'Việt Nam';
+                    document.getElementById('customer-gender').textContent = 'Nam';
+                    showToast('Quét CCCD thành công!', 'success');
+                    speak('Quét CCCD thành công!');
+                    stopStream();
+                    scanContainer.remove();
+                } else {
+                    showToast('Dữ liệu CCCD không hợp lệ!', 'error');
+                    speak('Dữ liệu CCCD không hợp lệ!');
+                    requestAnimationFrame(tick);
+                }
+            } else {
+                requestAnimationFrame(tick);
+            }
+        } else {
+            requestAnimationFrame(tick);
+        }
+    }
+
+    function stopStream() {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            stream = null;
+        }
+    }
+
+    stopScanButton.onclick = () => {
+        stopStream();
+        scanContainer.remove();
+        showToast('Đã dừng quét CCCD.', 'info');
+        speak('Đã dừng quét CCCD.');
+    };
+
+    cccdImageInput.onchange = function (e) {
+        const file = e.target.files[0];
+        if (!file) {
+            showToast('Chưa chọn ảnh CCCD!', 'error');
+            speak('Chưa chọn ảnh CCCD!');
+            return;
+        }
+
+        const img = new Image();
+        img.onload = function () {
+            const maxSize = 1024;
+            let width = img.width;
+            let height = img.height;
+            if (width > height) {
+                if (width > maxSize) {
+                    height *= maxSize / width;
+                    width = maxSize;
+                }
+            } else {
+                if (height > maxSize) {
+                    width *= maxSize / height;
+                    height = maxSize;
+                }
+            }
+            canvasElement.width = width;
+            canvasElement.height = height;
+            canvas.drawImage(img, 0, 0, width, height);
+
+            const imageData = canvas.getImageData(0, 0, width, height);
+            const code = jsQR(imageData.data, width, height, {
+                inversionAttempts: 'attemptBoth'
+            });
+
+            if (code) {
+                console.log('QR Data from Image:', code.data);
+                const qrData = code.data.split('|');
+                if (qrData.length >= 6 && /^\d{12}$/.test(qrData[0])) {
+                    document.getElementById('cccd-number').textContent = qrData[0];
+                    document.getElementById('customer-name').textContent = qrData[2] && !/^\d+$/.test(qrData[2]) ? qrData[2] : '';
+                    document.getElementById('customer-address').textContent = qrData[5] && qrData[5].includes(' ') ? qrData[5] : '';
+                    document.getElementById('customer-nationality').textContent = 'Việt Nam';
+                    document.getElementById('customer-gender').textContent = 'Nam';
+                    showToast('Quét CCCD từ ảnh thành công!', 'success');
+                    speak('Quét CCCD từ ảnh thành công!');
+                    scanContainer.remove();
+                } else {
+                    showToast('Dữ liệu CCCD trong ảnh không hợp lệ!', 'error');
+                    speak('Dữ liệu CCCD trong ảnh không hợp lệ!');
+                }
+            } else {
+                showToast('Không tìm thấy mã QR trong ảnh! Vui lòng nhập thủ công.', 'error');
+                speak('Không tìm thấy mã QR trong ảnh! Vui lòng nhập thủ công.');
+            }
+            URL.revokeObjectURL(img.src);
+        };
+        img.onerror = function () {
+            showToast('Lỗi khi tải ảnh CCCD!', 'error');
+            speak('Lỗi khi tải ảnh CCCD!');
+        };
+        img.src = URL.createObjectURL(file);
+    };
+}
+
+// Toggle between scan and manual input modes
+function toggleManualInput() {
+    document.getElementById('qr-box').style.display = 'none';
+    document.getElementById('manual-input').style.display = 'block';
+    document.getElementById('scan-btn').style.backgroundColor = '#007bff';
+    document.getElementById('manual-input-btn').style.backgroundColor = '#28a745';
+    resetCustomerInfo();
+}
+
+function toggleScanMode() {
+    document.getElementById('qr-box').style.display = 'block';
+    document.getElementById('manual-input').style.display = 'none';
+    document.getElementById('scan-btn').style.backgroundColor = '#28a745';
+    document.getElementById('manual-input-btn').style.backgroundColor = '#007bff';
+    resetCustomerInfo();
+}
+
+// Add customer
+document.getElementById('add-btn').addEventListener('click', () => {
+    let cccdNumber, customerName, customerAddress, customerNationality, customerGender;
+
+    if (document.getElementById('manual-input').style.display === 'block') {
+        cccdNumber = document.getElementById('manual-cccd-number').value.trim();
+        customerName = document.getElementById('manual-customer-name').value.trim();
+        customerAddress = document.getElementById('manual-customer-address').value.trim();
+        customerNationality = document.getElementById('manual-customer-nationality').value.trim();
+        customerGender = document.getElementById('manual-customer-gender').value;
+
+        if (!/^\d{12}$/.test(cccdNumber)) {
+            showToast('Số CCCD phải có đúng 12 chữ số!', 'error');
+            speak('Số CCCD phải có đúng 12 chữ số!');
+            return;
+        }
+        if (!customerName || /^\d+$/.test(customerName)) {
+            showToast('Họ tên không hợp lệ!', 'error');
+            speak('Họ tên không hợp lệ!');
+            return;
+        }
+        if (!customerAddress || customerAddress.length < 5) {
+            showToast('Địa chỉ phải có ít nhất 5 ký tự!', 'error');
+            speak('Địa chỉ phải có ít nhất 5 ký tự!');
+            return;
+        }
+        if (!customerNationality) {
+            showToast('Vui lòng nhập quốc tịch!', 'error');
+            speak('Vui lòng nhập quốc tịch!');
+            return;
+        }
+
+        document.getElementById('cccd-number').textContent = cccdNumber;
+        document.getElementById('customer-name').textContent = customerName;
+        document.getElementById('customer-address').textContent = customerAddress;
+        document.getElementById('customer-nationality').textContent = customerNationality;
+        document.getElementById('customer-gender').textContent = customerGender;
+    } else {
+        cccdNumber = document.getElementById('cccd-number').textContent;
+        customerName = document.getElementById('customer-name').textContent;
+        customerAddress = document.getElementById('customer-address').textContent;
+        customerNationality = document.getElementById('customer-nationality').textContent;
+        customerGender = document.getElementById('customer-gender').textContent;
+    }
+
+    if (cccdNumber === 'Chưa quét' || !customerName || !customerAddress || !customerNationality || customerGender === 'Chưa quét') {
+        showToast('Vui lòng quét CCCD hoặc nhập đầy đủ thông tin khách!', 'error');
+        speak('Vui lòng quét CCCD hoặc nhập đầy đủ thông tin khách!');
+        return;
+    }
+
+    const customerTable = document.getElementById('customer-table').querySelector('tbody');
+    const existingCustomer = Array.from(customerTable.rows).find(row => row.cells[3].textContent === cccdNumber);
+    if (existingCustomer) {
+        showToast('Khách này đã được thêm vào danh sách!', 'warning');
+        speak('Khách này đã được thêm vào danh sách!');
+        return;
+    }
+
+    const newRow = customerTable.insertRow();
+    newRow.innerHTML = `
+                <td><input type="checkbox" value="${customerTable.rows.length}"> ${customerTable.rows.length}</td>
+                <td>${customerName}</td>
+                <td>${customerGender}</td>
+                <td>${cccdNumber}</td>
+            `;
+    showToast('Thêm khách thành công!', 'success');
+    speak(`Thêm khách ${customerName} thành công!`);
+    resetCustomerInfo();
+
+    if (document.getElementById('manual-input').style.display === 'block') {
+        document.getElementById('manual-cccd-number').value = '';
+        document.getElementById('manual-customer-name').value = '';
+        document.getElementById('manual-customer-address').value = '';
+        document.getElementById('manual-customer-nationality').value = 'Việt Nam';
+        document.getElementById('manual-customer-gender').value = 'Nam';
+    }
+
+    // Hiển thị thông báo nhắc nhở phân phòng
+    document.getElementById('assign-room-alert').style.display = 'block';
+});
+
+// Skip button
+document.getElementById('skip-btn').addEventListener('click', () => {
+    resetCustomerInfo();
+    showToast('Đã bỏ qua thông tin khách.', 'info');
+    speak('Đã bỏ qua thông tin khách.');
+});
+
+// Move customers to room
+document.getElementById('move-right').addEventListener('click', () => {
+    const roomSelect = document.getElementById('room-select');
+    const maPhong = roomSelect.value;
+    if (!maPhong) {
+        showToast('Vui lòng chọn phòng trước khi chuyển khách!', 'error');
+        speak('Vui lòng chọn phòng trước khi chuyển khách!');
+        return;
+    }
+
+    const customerTable = document.getElementById('customer-table').querySelector('tbody');
+    const roomTable = document.getElementById('room-table').querySelector('tbody');
+    const selectedRows = customerTable.querySelectorAll('input[type="checkbox"]:checked');
+
+    if (selectedRows.length === 0) {
+        showToast('Vui lòng chọn ít nhất một khách để chuyển!', 'error');
+        speak('Vui lòng chọn ít nhất một khách để chuyển!');
+        return;
+    }
+
+    selectedRows.forEach((checkbox) => {
+        const row = checkbox.closest('tr');
+        const rowData = row.cells;
+        const cccdNumber = rowData[3].textContent;
+
+        if (!currentRoomCustomers[maPhong]) {
+            currentRoomCustomers[maPhong] = [];
+        }
+        if (currentRoomCustomers[maPhong].find(c => c.cccd === cccdNumber)) {
+            showToast(`Khách ${rowData[1].textContent} đã có trong phòng này!`, 'warning');
+            speak(`Khách ${rowData[1].textContent} đã có trong phòng này!`);
+            return;
+        }
+
+        currentRoomCustomers[maPhong].push({
+            name: rowData[1].textContent,
+            gender: rowData[2].textContent,
+            cccd: cccdNumber
+        });
+
+        const newRow = roomTable.insertRow();
+        newRow.innerHTML = `
+                    <td><input type="checkbox" value="${roomTable.rows.length}"> ${roomTable.rows.length}</td>
+                    <td>${rowData[1].textContent}</td>
+                    <td>${rowData[2].textContent}</td>
+                    <td>${rowData[3].textContent}</td>
+                `;
+        row.remove();
+    });
+
+    updateCustomerTableSTT();
+    updateRoomTableSTT();
+    // Ẩn thông báo nếu không còn khách trong customer-table
+    if (customerTable.rows.length === 0) {
+        document.getElementById('assign-room-alert').style.display = 'none';
+    }
+});
+
+// Move customers back to customer list
+document.getElementById('move-left').addEventListener('click', () => {
+    const roomSelect = document.getElementById('room-select');
+    const maPhong = roomSelect.value;
+    if (!maPhong) {
+        showToast('Vui lòng chọn phòng trước khi chuyển khách!', 'error');
+        speak('Vui lòng chọn phòng trước khi chuyển khách!');
+        return;
+    }
+
+    const roomTable = document.getElementById('room-table').querySelector('tbody');
+    const customerTable = document.getElementById('customer-table').querySelector('tbody');
+    const selectedRows = roomTable.querySelectorAll('input[type="checkbox"]:checked');
+
+    if (selectedRows.length === 0) {
+        showToast('Vui lòng chọn ít nhất một khách để chuyển!', 'error');
+        speak('Vui lòng chọn ít nhất một khách để chuyển!');
+        return;
+    }
+
+    selectedRows.forEach((checkbox) => {
+        const row = checkbox.closest('tr');
+        const rowData = row.cells;
+        const cccdNumber = rowData[3].textContent;
+
+        if (currentRoomCustomers[maPhong]) {
+            currentRoomCustomers[maPhong] = currentRoomCustomers[maPhong].filter(c => c.cccd !== cccdNumber);
+        }
+
+        const newRow = customerTable.insertRow();
+        newRow.innerHTML = `
+                    <td><input type="checkbox" value="${customerTable.rows.length}"> ${customerTable.rows.length}</td>
+                    <td>${rowData[1].textContent}</td>
+                    <td>${rowData[2].textContent}</td>
+                    <td>${rowData[3].textContent}</td>
+                `;
+        row.remove();
+    });
+
+    updateCustomerTableSTT();
+    updateRoomTableSTT();
+    // Hiển thị lại thông báo nếu có khách trong customer-table
+    if (customerTable.rows.length > 0) {
+        document.getElementById('assign-room-alert').style.display = 'block';
+    }
+});
+
+// Save all data (customers)
+document.getElementById('save-btn').addEventListener('click', () => {
+    if (!maNhomDatPhong) {
+        showToast('Không tìm thấy thông tin đoàn!', 'error');
+        speak('Không tìm thấy thông tin đoàn!');
+        return;
+    }
+
+    Swal.fire({
+        title: 'Xác nhận lưu thông tin khách',
+        text: 'Bạn có chắc muốn lưu thông tin khách không?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Có, lưu',
+        cancelButtonText: 'Hủy'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            saveGroupData();
+        }
+    });
+});
+
+function saveGroupData() {
+    const token = checkToken();
+    if (!token) return;
+
+    const customerTable = document.getElementById('customer-table').querySelector('tbody');
+    const customers = Array.from(customerTable.rows).map(row => ({
+        soGiayTo: row.cells[3].textContent,
+        hoTen: row.cells[1].textContent,
+        gioiTinh: row.cells[2].textContent,
+        diaChi: 'N/A',
+        quocTich: 'Việt Nam'
+    }));
+
+    const roomAssignments = Object.entries(currentRoomCustomers).map(([maPhong, customers]) => ({
+        maPhong: parseInt(maPhong),
+        customers: customers.map(c => ({
+            soGiayTo: c.cccd,
+            hoTen: c.name,
+            gioiTinh: c.gender,
+            diaChi: 'N/A',
+            quocTich: 'Việt Nam'
+        }))
+    }));
+
+    const customersWithoutRoom = customers.filter(customer =>
+        !roomAssignments.some(r => r.customers.some(c => c.soGiayTo === customer.soGiayTo))
+    );
+
+    if (customersWithoutRoom.length > 0) {
+        const customerNames = customersWithoutRoom.map(c => c.hoTen).join(', ');
+        showToast(`Vui lòng phân phòng cho các khách sau trước khi lưu: ${customerNames}`, 'error');
+        speak(`Vui lòng phân phòng cho các khách sau trước khi lưu: ${customerNames}`);
+        return;
+    }
+
+    const checkinDate = document.getElementById('checkin-date').value;
+    if (!checkinDate) {
+        showToast('Vui lòng nhập ngày nhận phòng trước khi lưu khách!', 'error');
+        speak('Vui lòng nhập ngày nhận phòng trước khi lưu khách!');
+        return;
+    }
+
+    if (Object.keys(currentRoomCustomers).length === 0) {
+        showToast('Không có khách nào được phân phòng!', 'error');
+        speak('Không có khách nào được phân phòng!');
+        return;
+    }
+
+    Swal.fire({
+        title: 'Đang lưu...',
+        text: 'Vui lòng đợi trong giây lát.',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    const customerPromises = customers.concat(...roomAssignments.flatMap(r => r.customers))
+        .filter((c, i, arr) => arr.findIndex(x => x.soGiayTo === c.soGiayTo) === i)
+        .map(customer => {
+            const matchingRoom = roomAssignments.find(r => r.customers.some(c => c.soGiayTo === customer.soGiayTo));
+            const maPhong = matchingRoom ? matchingRoom.maPhong : 0;
+
+            if (maPhong === 0) {
+                return Promise.reject(new Error(`Không tìm thấy phòng cho khách ${customer.hoTen}`));
+            }
+
+            return fetch('http://localhost:5000/api/KhachSanAPI/BookRoom', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    MaPhong: maPhong,
+                    LoaiGiayTo: 'CCCD',
+                    SoGiayTo: customer.soGiayTo,
+                    HoTen: customer.hoTen,
+                    DiaChi: customer.diaChi,
+                    QuocTich: customer.quocTich,
+                    GioiTinh: customer.gioiTinh,
+                    LoaiDatPhong: 'Theo ngày',
+                    NgayNhanPhongDuKien: checkinDate
+                })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(`Lưu khách ${customer.hoTen} thất bại: ${err.message || `HTTP error! Status: ${response.status}`}`);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => ({ success: data.success, maDatPhong: data.maDatPhong, customer, maPhong }));
+        });
+
+    Promise.allSettled(customerPromises)
+        .then(results => {
+            const failed = results.filter(r => r.status === 'rejected' || !r.value.success);
+            if (failed.length > 0) {
+                Swal.close();
+                const errorMessages = failed.map(r => r.status === 'rejected' ? r.reason.message : `Lưu khách ${r.value.customer.hoTen} thất bại`);
+                showToast('Lỗi khi lưu một số khách: ' + errorMessages.join('; '), 'error');
+                speak('Lỗi khi lưu một số khách!');
+                return;
+            }
+
+            const updatePromises = results
+                .filter(r => r.status === 'fulfilled' && r.value.success)
+                .map(result => {
+                    return fetch('http://localhost:5000/api/KhachSanAPI/UpdateDatPhongGroup', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        credentials: 'include',
+                        body: JSON.stringify({
+                            MaDatPhong: result.value.maDatPhong,
+                            MaNhomDatPhong: maNhomDatPhong
+                        })
+                    })
+                        .then(response => {
+                            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (!data.success) throw new Error(data.message || 'Lỗi khi cập nhật nhóm cho đặt phòng');
+                            return result;
+                        });
+                });
+
+            return Promise.allSettled(updatePromises);
+        })
+        .then(results => {
+            const failed = results.filter(r => r.status === 'rejected');
+            if (failed.length > 0) {
+                Swal.close();
+                const errorMessages = failed.map(r => r.reason.message);
+                showToast('Lỗi khi cập nhật nhóm cho một số đặt phòng: ' + errorMessages.join('; '), 'error');
+                speak('Lỗi khi cập nhật nhóm cho một số đặt phòng!');
+                return;
+            }
+
+            Swal.close();
+            showToast('Lưu thông tin khách thành công!', 'success');
+            speak('Lưu thông tin khách thành công!');
+
+            // Làm mới dữ liệu và giao diện
+            currentRoomCustomers = {};
+            document.getElementById('customer-table').querySelector('tbody').innerHTML = '';
+            document.getElementById('room-table').querySelector('tbody').innerHTML = '';
+            resetCustomerInfo();
+            loadAvailableRooms();
+            loadAssignedRooms();
+            document.getElementById('assign-room-alert').style.display = 'none';
+
+            // Xóa dòng chuyển hướng
+            // window.location.href = '/khachsan.html';
+        })
+        .catch(error => {
+            Swal.close();
+            console.error('Lỗi khi lưu dữ liệu:', error);
+            showToast('Lỗi khi lưu dữ liệu: ' + error.message, 'error');
+            speak('Lỗi khi lưu dữ liệu: ' + error.message);
+        });
+}
+
+// Reset customer info
+function resetCustomerInfo() {
+    document.getElementById('cccd-number').textContent = 'Chưa quét';
+    document.getElementById('customer-name').textContent = 'Chưa quét';
+    document.getElementById('customer-address').textContent = 'Chưa quét';
+    document.getElementById('customer-nationality').textContent = 'Chưa quét';
+    document.getElementById('customer-gender').textContent = 'Chưa quét';
+}
+
+// Update STT for customer table
+function updateCustomerTableSTT() {
+    const customerTable = document.getElementById('customer-table').querySelector('tbody');
+    Array.from(customerTable.rows).forEach((row, index) => {
+        row.cells[0].innerHTML = `<input type="checkbox" value="${index + 1}"> ${index + 1}`;
+    });
+}
+
+// Update STT for room table
+function updateRoomTableSTT() {
+    const roomTable = document.getElementById('room-table').querySelector('tbody');
+    Array.from(roomTable.rows).forEach((row, index) => {
+        row.cells[0].innerHTML = `<input type="checkbox" value="${index + 1}"> ${index + 1}`;
+    });
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    loadGroupInfo();
+    document.getElementById('scan-btn').addEventListener('click', scanCCCD);
+    document.getElementById('manual-input-btn').addEventListener('click', toggleManualInput);
+    toggleScanMode();
+});
+
+// Back button
+document.getElementById('back-btn').addEventListener('click', () => {
+    Swal.fire({
+        title: 'Xác nhận trở về',
+        text: 'Bạn có chắc muốn trở về trang chủ không? Dữ liệu chưa lưu sẽ bị mất.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Có, trở về',
+        cancelButtonText: 'Hủy'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = '/khachsan.html';
+        }
+    });
 });

@@ -145,22 +145,22 @@ function continueLoadingNotifications(maNhanVien) {
                 countElement.textContent = data.unreadCount;
 
                 data.notifications.forEach(notification => {
-    const notificationId = notification.MaThongBao || notification.maThongBao;
-    const title = notification.TieuDe || notification.tieuDe;
-    const content = notification.NoiDung || notification.noiDung;
-    let time = notification.ThoiGianGui || notification.thoiGianGui;
+                    const notificationId = notification.MaThongBao || notification.maThongBao;
+                    const title = notification.TieuDe || notification.tieuDe;
+                    const content = notification.NoiDung || notification.noiDung;
+                    let time = notification.ThoiGianGui || notification.thoiGianGui;
 
-    // Chuyển đổi định dạng thời gian từ "dd/MM/yyyy HH:mm:ss" sang "yyyy-MM-ddTHH:mm:ss"
-    if (time) {
-        const [datePart, timePart] = time.split(' ');
-        const [day, month, year] = datePart.split('/');
-        time = `${year}-${month}-${day}T${timePart}`; // Chuyển thành "2025-05-30T09:51:44"
-    }
+                    // Chuyển đổi định dạng thời gian từ "dd/MM/yyyy HH:mm:ss" sang "yyyy-MM-ddTHH:mm:ss"
+                    if (time) {
+                        const [datePart, timePart] = time.split(' ');
+                        const [day, month, year] = datePart.split('/');
+                        time = `${year}-${month}-${day}T${timePart}`; // Chuyển thành "2025-05-30T09:51:44"
+                    }
 
-    const item = document.createElement('div');
-    item.className = 'notification-item';
-    item.setAttribute('data-id', notificationId);
-    item.innerHTML = `
+                    const item = document.createElement('div');
+                    item.className = 'notification-item';
+                    item.setAttribute('data-id', notificationId);
+                    item.innerHTML = `
         <strong>${title}</strong>
         <p>${content}</p>
         <small>${new Date(time).toLocaleString('vi-VN')}</small>

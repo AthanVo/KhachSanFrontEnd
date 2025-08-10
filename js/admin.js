@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://localhost:5001'; // Thay bằng URL API thực tế
+const API_BASE_URL = 'http://localhost:5000'; // Thay bằng URL API thực tế
 
 // Kiểm tra đăng nhập và vai trò admin khi load trang
 $(document).ready(function () {

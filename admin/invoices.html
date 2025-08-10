@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,32 +10,15 @@
     <title>Quản lý hóa đơn - Admin</title>
     <!-- Custom fonts -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
     <!-- Custom styles -->
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="/css/sb-admin-2.min.css" rel="stylesheet">
     <!-- DataTables -->
     <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css" rel="stylesheet">
-    <style>
-        a { text-decoration: none; }
-        .sidebar-heading {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #ffffff;
-            background-color: #007bff;
-            text-align: center;
-            padding: 10px 20px;
-            border-radius: 5px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-        }
-        .sidebar-heading:hover {
-            background-color: #0056b3;
-            transform: scale(1.05);
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
-        }
-        .table th, .table td { vertical-align: middle; }
-    </style>
 </head>
+
 <body id="page-top">
     <div id="wrapper">
         <!-- Sidebar -->
@@ -42,65 +26,37 @@
             <hr class="sidebar-divider my-0">
             <li class="nav-item active"></li>
             <hr class="sidebar-divider">
-            <a href="admin.html">
+            <a href="/admin/admin.html">
                 <div class="sidebar-heading">Admin</div>
             </a>
             <hr class="sidebar-divider">
             <div class="sidebar-heading">Quản lý</div>
             <li class="nav-item">
-                <a class="nav-link" href="rooms.html">
+                <a class="nav-link" href="/admin/rooms.html">
                     <i class="fas fa-bed"></i>
                     <span>Danh sách phòng</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="users.html">
+                <a class="nav-link" href="/admin/guests.html">
                     <i class="fas fa-users"></i>
                     <span>Người dùng</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="guests.html">
+                <a class="nav-link" href="/admin/guests.html">
                     <i class="fas fa-user-check"></i>
                     <span>Khách hàng</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="bookings.html">
+                <a class="nav-link" href="khachsan.html">
                     <i class="fas fa-calendar-check"></i>
                     <span>Đặt phòng</span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="room-types.html">
-                    <i class="fas fa-door-open"></i>
-                    <span>Loại phòng</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="services.html">
-                    <i class="fas fa-concierge-bell"></i>
-                    <span>Dịch vụ</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="revenue.html">
-                    <i class="fas fa-dollar-sign"></i>
-                    <span>Doanh thu</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="promotions.html">
-                    <i class="fas fa-percent"></i>
-                    <span>Mã khuyến mãi</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="booking-details.html">
-                    <i class="fas fa-info-circle"></i>
-                    <span>Chi tiết đặt phòng</span>
-                </a>
-            </li>
+            
+            
             <hr class="sidebar-divider d-none d-md-block">
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
@@ -112,10 +68,11 @@
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                         <i class="fa fa-bars"></i>
                     </button>
-                    <form class="navbar-search d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100">
+                    <form
+                        class="navbar-search d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100">
                         <div class="input-group">
                             <input type="text" id="searchQuery" class="form-control bg-light border-0 small"
-                                   placeholder="Tìm kiếm..." aria-label="Search">
+                                placeholder="Tìm kiếm..." aria-label="Search">
                             <div class="input-group-append">
                                 <button class="btn btn-primary" type="submit" onclick="search()">
                                     <i class="fas fa-search fa-sm"></i> Tìm
@@ -125,7 +82,7 @@
                     </form>
                     <ul class="navbar-nav d-flex align-items-center">
                         <li class="nav-item me-3">
-                            <a class="nav-link" href="/public/booking.html">Trang đặt phòng</a>
+                            <a class="nav-link" href="khachsan.html">Trang đặt phòng</a>
                         </li>
                         <li class="nav-item me-3">
                             <span class="nav-link" id="username">Chưa đăng nhập</span>
@@ -193,8 +150,8 @@
     <script src="https://cdn.startbootstrap.com/sb-admin-2/4.1.4/js/sb-admin-2.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
-    <script src="js/invoices.js"></script>
-    <script src="js/admin.js"></script>
+    <script src="/js/invoices.js"></script>
+    <script src="/js/admin.js"></script>
     <script>
         $(document).ready(function () {
             const token = localStorage.getItem('jwtToken');
@@ -207,4 +164,5 @@
         });
     </script>
 </body>
+
 </html>

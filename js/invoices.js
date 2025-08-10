@@ -103,13 +103,13 @@ function loadInvoices() {
                             { data: 'MaHoaDon' },
                             { data: 'MaDatPhong' },
                             { data: 'SoPhong' },
-                            { 
+                            {
                                 data: 'NgayXuat',
                                 render: function (data) {
                                     return formatDate(data);
                                 }
                             },
-                            { 
+                            {
                                 data: 'TongTien',
                                 render: function (data) {
                                     return formatCurrency(data);
@@ -175,7 +175,7 @@ function loadInvoices() {
             console.error('Lỗi khi gọi API danh sách hóa đơn:', errorMessage, jqXHR.responseJSON);
             showAlert(`Lỗi tải dữ liệu: ${errorMessage}`, 'error');
         })
-        .always(function() {
+        .always(function () {
             hideLoadingState();
         });
 }
@@ -199,9 +199,9 @@ function updateInvoiceStatus(maHoaDon, trangThaiThanhToan) {
 }
 
 // Xử lý form lọc ngày
-$(document).ready(function() {
+$(document).ready(function () {
     console.log('Invoices page loaded');
-    
+
     $('#dateFilterForm').submit(function (e) {
         e.preventDefault();
         console.log('Date filter form submitted');

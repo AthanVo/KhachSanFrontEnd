@@ -272,19 +272,19 @@ function submitShiftEnd() {
     const transfer = parseFloat((document.getElementById('shift-transfer').textContent || '0').replace(/[^\d.-]/g, ''));
 
     // Kiểm tra GhiChu
-    if (!shiftNote || !shiftNote.value.trim()) {    
+    if (!shiftNote || !shiftNote.value.trim()) {
         showToast('Vui lòng nhập ghi chú cho ca làm việc', 'error');
         return;
     }
 
     const tongTienTrongCa = currentShift?.tongTienHoaDon || 0;
-const data = {
-    TongTienTrongCa: tongTienTrongCa,
-    TongTienChuyenGiao: nextStaffSelect.value ? tongTienTrongCa : 0,
-    GhiChu: shiftNote.value.trim(),
-    MaNhanVienCaTiepTheo: nextStaffSelect.value ? parseInt(nextStaffSelect.value) : null,
-    MaNhanVien: userRole === "Quản trị" && adminStaffSelect.value ? parseInt(adminStaffSelect.value) : null
-};
+    const data = {
+        TongTienTrongCa: tongTienTrongCa,
+        TongTienChuyenGiao: nextStaffSelect.value ? tongTienTrongCa : 0,
+        GhiChu: shiftNote.value.trim(),
+        MaNhanVienCaTiepTheo: nextStaffSelect.value ? parseInt(nextStaffSelect.value) : null,
+        MaNhanVien: userRole === "Quản trị" && adminStaffSelect.value ? parseInt(adminStaffSelect.value) : null
+    };
 
     console.log('Đang gửi yêu cầu kết thúc ca với dữ liệu:', data);
 

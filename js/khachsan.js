@@ -86,9 +86,9 @@ function parseCustomDateTime(dateTimeStr) {
     // Kiểm tra định dạng "HH:mm:ss DD/M/YYYY" hoặc "HH:mm:ss DD/M/YY"
     const regexFullYear = /^(\d{2}:\d{2}:\d{2})\s(\d{1,2}\/\d{1,2}\/\d{4})$/;
     const regexShortYear = /^(\d{2}:\d{2}:\d{2})\s(\d{1,2}\/\d{1,2}\/\d{2})$/;
-    
+
     let timePart, datePart, year;
-    
+
     if (regexFullYear.test(dateTimeStr)) {
         const match = dateTimeStr.match(regexFullYear);
         timePart = match[1]; // "HH:mm:ss"
@@ -1193,4 +1193,139 @@ document.addEventListener('DOMContentLoaded', function () {
             if (staffNameElement) staffNameElement.textContent = 'N/A';
             if (staffIdElement) staffIdElement.textContent = 'N/A';
         });
+});
+
+// Hàm tải thông tin người dùng
+
+function updateTime() {
+    const now = new Date();
+    const timeString = now.toLocaleString('vi-VN', { dateStyle: 'short', timeStyle: 'medium' });
+    document.getElementById('current-time').textContent = timeString;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOMContentLoaded triggered');
+
+    // Kiểm tra token
+    const token = localStorage.getItem('jwtToken');
+    if (!token) {
+        console.log('Không tìm thấy token trong localStorage');
+        Swal.fire({
+            icon: 'warning',
+            title: 'Chưa đăng nhập',
+            text: 'Bạn cần đăng nhập để truy cập trang này!',
+            confirmButtonText: 'Đăng nhập'
+        }).then(() => {
+            window.location.href = '/auth/login.html';
+        });
+        return;
+    }
+
+    // Kiểm tra vai trò ngay sau khi kiểm tra token
+    const role = localStorage.getItem('vaitro');
+    console.log('User role:', role);
+    try {
+        if (role !== "Quản trị" && role !== "Nhân viên") {
+            console.log('Người dùng không có quyền truy cập trang này:', role);
+            if (role === "Khách hàng") {
+                console.log('Chuyển hướng Khách hàng đến Booking');
+                window.location.href = 'khachhang.html';
+            } else {
+                console.log('Không có vai trò hợp lệ, chuyển hướng đến login.html');
+                localStorage.removeItem('jwtToken');
+                localStorage.removeItem('tenDangNhap');
+                localStorage.removeItem('vaitro');
+                localStorage.removeItem('hoTen');
+                window.location.href = '/login.html';
+            }
+            return; // Ngừng thực thi các hàm khác
+        }
+    } catch (error) {
+        console.error('Lỗi khi kiểm tra vai trò:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Lỗi hệ thống',
+            text: 'Có lỗi xảy ra khi kiểm tra quyền truy cập. Vui lòng đăng nhập lại!',
+            confirmButtonText: 'OK'
+        }).then(() => {
+            localStorage.removeItem('jwtToken');
+            localStorage.removeItem('tenDangNhap');
+            localStorage.removeItem('vaitro');
+            localStorage.removeItem('hoTen');
+            window.location.href = '/login.html';
+        });
+        return;
+    }
+
+    // Bind toggleDarkMode to button
+    const toggleButton = document.querySelector('.toggle-dark-mode');
+    if (toggleButton) {
+        toggleButton.addEventListener('click', toggleDarkMode);
+    } else {
+        console.error('Toggle dark mode button not found');
+    }
+
+    // Apply saved dark mode
+    if (localStorage.getItem('darkMode') === 'enabled') {
+        console.log('Applying dark mode from localStorage');
+        document.body.classList.add('dark-mode');
+        if (toggleButton) {
+            toggleButton.innerHTML = '<i class="fas fa-sun"></i> Chế độ sáng';
+        }
+    }
+
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    fetch('http://localhost:5000/api/KhachSanAPI/UpdateRoomStatus', {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => {
+            console.log('UpdateRoomStatus response status:', response.status);
+            if (!response.ok) {
+                if (response.status === 401) {
+                    throw new Error('Unauthorized');
+                }
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('UpdateRoomStatus data:', data);
+            if (data.success) {
+                console.log('Đã cập nhật trạng thái phòng:', data.message);
+            } else {
+                console.error('Cập nhật trạng thái phòng thất bại:', data.message);
+                showToast(data.message || 'Cập nhật trạng thái phòng thất bại!', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Lỗi khi cập nhật trạng thái phòng:', error);
+            if (error.message === 'Unauthorized') {
+                showToast('Phiên đăng nhập hết hạn, vui lòng đăng nhập lại', 'error');
+                localStorage.removeItem('jwtToken');
+                localStorage.removeItem('tenDangNhap');
+                localStorage.removeItem('vaitro');
+                localStorage.removeItem('hoTen');
+                window.location.href = '/login.html';
+            } else {
+                showToast('Lỗi khi cập nhật trạng thái phòng: ' + error.message, 'error');
+            }
+        });
+
+    console.log('Calling loadUserInfo');
+    loadUserInfo();
+    console.log('Calling loadRooms');
+    loadRooms();
+    console.log('Checking loadNotifications');
+    if (typeof loadNotifications === 'function') {
+        console.log('Calling loadNotifications');
+        loadNotifications();
+    } else {
+        console.warn('loadNotifications không được định nghĩa');
+    }
 });

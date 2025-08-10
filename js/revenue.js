@@ -83,7 +83,7 @@ function createSafeChart(canvasId, config) {
 // Hàm tải và vẽ báo cáo doanh thu
 function loadRevenueReports() {
     console.log('Bắt đầu tải báo cáo doanh thu...');
-    
+
     const startDate = $('#startDate').val();
     const endDate = $('#endDate').val();
 
@@ -111,8 +111,8 @@ function loadRevenueReports() {
 // Hàm hiển thị trạng thái loading
 function showLoadingState() {
     const loadingHtml = '<div class="text-center p-4"><i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...</div>';
-    
-    $('.chart-container').each(function() {
+
+    $('.chart-container').each(function () {
         const $container = $(this);
         if (!$container.find('.loading-overlay').length) {
             $container.css('position', 'relative');
@@ -161,7 +161,7 @@ function loadDailyRevenue(params) {
                             y: {
                                 beginAtZero: true,
                                 ticks: {
-                                    callback: function(value) {
+                                    callback: function (value) {
                                         return formatCurrency(value);
                                     }
                                 }
@@ -176,7 +176,7 @@ function loadDailyRevenue(params) {
                         plugins: {
                             tooltip: {
                                 callbacks: {
-                                    label: function(context) {
+                                    label: function (context) {
                                         return `Doanh thu: ${formatCurrency(context.parsed.y)}`;
                                     }
                                 }
@@ -196,7 +196,7 @@ function loadDailyRevenue(params) {
             console.error('Lỗi khi gọi API doanh thu theo ngày:', textStatus, errorThrown);
             showErrorMessage('dailyRevenueChart', `Lỗi tải dữ liệu: ${textStatus} - ${errorThrown}`);
         })
-        .always(function() {
+        .always(function () {
             hideLoadingState();
         });
 }
@@ -229,7 +229,7 @@ function loadMonthlyRevenue(params) {
                             y: {
                                 beginAtZero: true,
                                 ticks: {
-                                    callback: function(value) {
+                                    callback: function (value) {
                                         return formatCurrency(value);
                                     }
                                 }
@@ -238,7 +238,7 @@ function loadMonthlyRevenue(params) {
                         plugins: {
                             tooltip: {
                                 callbacks: {
-                                    label: function(context) {
+                                    label: function (context) {
                                         return `Doanh thu: ${formatCurrency(context.parsed.y)}`;
                                     }
                                 }
@@ -258,7 +258,7 @@ function loadMonthlyRevenue(params) {
             console.error('Lỗi khi gọi API doanh thu theo tháng:', textStatus, errorThrown);
             showErrorMessage('monthlyRevenueChart', `Lỗi tải dữ liệu: ${textStatus} - ${errorThrown}`);
         })
-        .always(function() {
+        .always(function () {
             hideLoadingState();
         });
 }
@@ -291,7 +291,7 @@ function loadYearlyRevenue(params) {
                             y: {
                                 beginAtZero: true,
                                 ticks: {
-                                    callback: function(value) {
+                                    callback: function (value) {
                                         return formatCurrency(value);
                                     }
                                 }
@@ -300,7 +300,7 @@ function loadYearlyRevenue(params) {
                         plugins: {
                             tooltip: {
                                 callbacks: {
-                                    label: function(context) {
+                                    label: function (context) {
                                         return `Doanh thu: ${formatCurrency(context.parsed.y)}`;
                                     }
                                 }
@@ -320,7 +320,7 @@ function loadYearlyRevenue(params) {
             console.error('Lỗi khi gọi API doanh thu theo năm:', textStatus, errorThrown);
             showErrorMessage('yearlyRevenueChart', `Lỗi tải dữ liệu: ${textStatus} - ${errorThrown}`);
         })
-        .always(function() {
+        .always(function () {
             hideLoadingState();
         });
 }
@@ -354,9 +354,9 @@ function showErrorMessage(canvasId, message) {
 }
 
 // Event handlers
-$(document).ready(function() {
+$(document).ready(function () {
     console.log('Revenue page loaded');
-    
+
     $('#dateFilterForm').submit(function (e) {
         e.preventDefault();
         console.log('Date filter form submitted');
@@ -365,7 +365,7 @@ $(document).ready(function() {
 });
 
 // Cleanup function khi rời khỏi trang
-window.addEventListener('beforeunload', function() {
+window.addEventListener('beforeunload', function () {
     if (dailyChart) dailyChart.destroy();
     if (monthlyChart) monthlyChart.destroy();
     if (yearlyChart) yearlyChart.destroy();

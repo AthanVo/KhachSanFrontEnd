@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,17 +15,20 @@
             margin: 0;
             background-color: #f0f0f0;
         }
+
         .register-container {
             background-color: white;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 350px;
         }
+
         .register-container h2 {
             text-align: center;
             margin-bottom: 20px;
         }
+
         .register-container input {
             width: 100%;
             padding: 10px;
@@ -33,6 +37,7 @@
             border-radius: 4px;
             box-sizing: border-box;
         }
+
         .register-container button {
             width: 100%;
             padding: 10px;
@@ -42,19 +47,23 @@
             border-radius: 4px;
             cursor: pointer;
         }
+
         .register-container button:hover {
             background-color: #0056b3;
         }
+
         #message {
             text-align: center;
             margin-top: 10px;
         }
+
         .login-link {
             text-align: center;
             margin-top: 10px;
         }
     </style>
 </head>
+
 <body>
     <div class="register-container">
         <h2>Đăng ký tài khoản</h2>
@@ -72,70 +81,8 @@
             <a href="login.html">Đã có tài khoản? Đăng nhập</a>
         </div>
     </div>
+    <script src="js/login.js"></script>
 
-    <script>
-        document.getElementById("register-form").addEventListener("submit", async function (e) {
-            e.preventDefault();
-
-            const hotenKH = document.getElementById("HotenKH").value;
-            const tenDN = document.getElementById("TenDN").value;
-            const matKhau = document.getElementById("MatKhau").value;
-            const matkhaunhaplai = document.getElementById("Matkhaunhaplai").value;
-            const email = document.getElementById("Email").value;
-            const dienthoai = document.getElementById("Dienthoai").value;
-            const messageElement = document.getElementById("message");
-
-            // Validate client-side
-            if (!hotenKH || !tenDN || !matKhau || !matkhaunhaplai || !email || !dienthoai) {
-                messageElement.innerText = "Vui lòng nhập đầy đủ thông tin";
-                messageElement.style.color = "red";
-                return;
-            }
-
-            if (matKhau !== matkhaunhaplai) {
-                messageElement.innerText = "Mật khẩu nhập lại không khớp";
-                messageElement.style.color = "red";
-                return;
-            }
-
-            if (matKhau.length < 8) {
-                messageElement.innerText = "Mật khẩu phải dài ít nhất 8 ký tự";
-                messageElement.style.color = "red";
-                return;
-            }
-
-            if (!/^\d{10,11}$/.test(dienthoai)) {
-                messageElement.innerText = "Số điện thoại phải là 10 hoặc 11 chữ số";
-                messageElement.style.color = "red";
-                return;
-            }
-
-            try {
-                const response = await fetch("http://localhost:5000/api/Auth/register", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ hotenKH, tenDN, matKhau, matkhaunhaplai, email, dienthoai })
-                });
-
-                const result = await response.json();
-
-                if (response.ok && result.success) {
-                    messageElement.innerText = result.message || "Đăng ký thành công! Chuyển tới đăng nhập...";
-                    messageElement.style.color = "green";
-                    setTimeout(() => {
-                        window.location.href = "login.html";
-                    }, 2000);
-                } else {
-                    messageElement.innerText = result.message || "Đăng ký thất bại";
-                    messageElement.style.color = "red";
-                }
-            } catch (error) {
-                messageElement.innerText = "Lỗi kết nối: " + error.message;
-                messageElement.style.color = "red";
-            }
-        });
-    </script>
 </body>
+
 </html>
